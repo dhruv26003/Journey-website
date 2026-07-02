@@ -44,16 +44,18 @@ class MemoryAdmin(admin.ModelAdmin):
             'description': 'Choose Photo or Video, then upload the file.',
         }),
     )
-
     def media_type_badge(self, obj):
         if obj.media_type == Memory.MEDIA_TYPE_VIDEO:
             return format_html(
-                '<span style="background:#c0605a;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.8em;">🎥 Video</span>'
+                '<span style="background:#c0605a;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.8em;">{}</span>',
+                "🎥 Video",
             )
+
         return format_html(
-            '<span style="background:#6a9e6a;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.8em;">📷 Photo</span>'
+            '<span style="background:#6a9e6a;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.8em;">{}</span>',
+            "📷 Photo",
         )
-    media_type_badge.short_description = 'Type'
+    media_type_badge.short_description = "Type"
 
 
 # ── Site Settings ──────────────────────────────────────────
