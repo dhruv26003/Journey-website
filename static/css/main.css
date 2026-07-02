@@ -1,0 +1,282 @@
+/* =========================================================
+   main.css — Site-wide styles for Our Memories
+   Warm color palette: soft peach, rose, and cream tones
+   ========================================================= */
+
+/* ---- CSS Custom Properties ---- */
+:root {
+    --color-bg: #fdf6f0;
+    /* warm off-white / cream */
+    --color-surface: #fff8f4;
+    /* slightly lighter surface */
+    --color-primary: #c0605a;
+    /* muted rose-red */
+    --color-primary-hover: #a04e49;
+    --color-secondary: #e8a598;
+    /* soft peach */
+    --color-accent: #f2c4a0;
+    /* warm apricot */
+    --color-text: #3d2b27;
+    /* deep warm brown */
+    --color-text-muted: #8c6a64;
+    --color-nav-bg: #f5e6df;
+    /* light peach for navbar */
+    --color-nav-border: #e8c8bf;
+    --color-link: #c0605a;
+    --color-link-hover: #a04e49;
+
+    --font-serif: 'Georgia', 'Times New Roman', serif;
+    --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+    --border-radius: 0.5rem;
+    --transition: 0.25s ease;
+}
+
+/* ---- Base ---- */
+html,
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-serif);
+    color: var(--color-primary);
+}
+
+a {
+    color: var(--color-link);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+a:hover,
+a:focus {
+    color: var(--color-link-hover);
+    text-decoration: underline;
+}
+
+/* ---- Navbar ---- */
+.navbar-warm {
+    background-color: var(--color-nav-bg);
+    border-bottom: 1px solid var(--color-nav-border);
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.navbar-warm .navbar-brand {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    color: var(--color-primary);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.navbar-warm .navbar-brand:hover {
+    color: var(--color-primary-hover);
+    text-decoration: none;
+}
+
+.brand-heart {
+    display: inline-block;
+    animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    14% {
+        transform: scale(1.2);
+    }
+
+    28% {
+        transform: scale(1);
+    }
+
+    42% {
+        transform: scale(1.15);
+    }
+
+    56% {
+        transform: scale(1);
+    }
+}
+
+/* Navbar toggler — warm tint */
+.navbar-warm .navbar-toggler {
+    border-color: var(--color-secondary);
+}
+
+.navbar-warm .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23c0605a' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Nav links */
+.navbar-warm .nav-link {
+    color: var(--color-text-muted);
+    font-weight: 500;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.navbar-warm .nav-link:hover,
+.navbar-warm .nav-link:focus {
+    color: var(--color-primary);
+    background-color: var(--color-accent);
+    text-decoration: none;
+}
+
+.navbar-warm .nav-link.active {
+    color: var(--color-surface);
+    background-color: var(--color-primary);
+    font-weight: 600;
+}
+
+/* ---- Main content area ---- */
+main {
+    min-height: calc(100vh - 70px);
+    padding-bottom: 3rem;
+}
+
+/* ---- Utility classes ---- */
+.text-warm-muted {
+    color: var(--color-text-muted) !important;
+}
+
+.bg-warm {
+    background-color: var(--color-surface) !important;
+}
+
+/* ---- Skip navigation link (accessibility) ---- */
+.skip-to-content {
+    position: absolute;
+    top: -100%;
+    left: 0;
+    z-index: 9999;
+    padding: 0.75rem 1.25rem;
+    background-color: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 0 0 var(--border-radius) 0;
+    text-decoration: none;
+    transition: top 0.15s ease;
+}
+
+.skip-to-content:focus {
+    top: 0;
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 3px;
+}
+
+/* ---- Focus indicators (accessibility) ---- */
+
+/* Base rule — applies to all interactive elements not given a custom style */
+:focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 3px;
+}
+
+/* Links — override the color-only :focus rule with a visible ring */
+a:focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+/* Buttons (including Bootstrap .btn variants) */
+button:focus-visible,
+[type="button"]:focus-visible,
+[type="submit"]:focus-visible,
+[type="reset"]:focus-visible,
+.btn:focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(232, 165, 152, 0.35);
+}
+
+/* Form controls */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(232, 165, 152, 0.35);
+    border-color: var(--color-primary);
+}
+
+/* Navbar toggler button */
+.navbar-toggler:focus-visible {
+    outline: 3px solid var(--color-secondary);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(232, 165, 152, 0.35);
+}
+
+/* ---- Responsive images ---- */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* =========================================================
+   Scroll Reveal Animations
+   ========================================================= */
+.scroll-reveal {
+    opacity: 0;
+    transition: opacity var(--scroll-duration, 0.8s) cubic-bezier(0.215, 0.610, 0.355, 1.000),
+                transform var(--scroll-duration, 0.8s) cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    transition-delay: var(--scroll-delay, 0s);
+    will-change: opacity, transform;
+}
+
+.scroll-reveal-fade-up {
+    transform: translateY(var(--scroll-distance, 30px));
+}
+
+.scroll-reveal-fade-down {
+    transform: translateY(calc(-1 * var(--scroll-distance, 30px)));
+}
+
+.scroll-reveal-fade-left {
+    transform: translateX(var(--scroll-distance, 30px));
+}
+
+.scroll-reveal-fade-right {
+    transform: translateX(calc(-1 * var(--scroll-distance, 30px)));
+}
+
+.scroll-reveal-zoom-in {
+    transform: scale(0.92);
+}
+
+.scroll-reveal-zoom-out {
+    transform: scale(1.08);
+}
+
+/* Revealed State */
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translate(0) scale(1);
+}
+
+/* Accessibility: respect user preferences */
+@media (prefers-reduced-motion: reduce) {
+    .scroll-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        transition-delay: 0s !important;
+    }
+}

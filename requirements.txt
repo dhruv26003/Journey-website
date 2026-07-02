@@ -1,0 +1,10 @@
+asgiref==3.8.1
+dj-database-url==3.1.2
+Django==5.0.14
+django-jazzmin==3.0.1
+hypothesis==6.155.1
+Pillow==11.2.1
+python-decouple==3.8
+sqlparse==0.5.3
+tzdata==2025.2
+whitenoise==6.12.0

@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}BV Photos{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bv-page {
+        background: linear-gradient(135deg, #fdf6f0 0%, #f8f0fb 50%, #fdf6f0 100%);
+        min-height: 100vh;
+        padding: 3rem 0 5rem;
+    }
+
+    .bv-hero {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .bv-hero__icon {
+        font-size: 3.5rem;
+        display: block;
+        margin-bottom: 0.5rem;
+        animation: bvpulse 2s ease-in-out infinite;
+    }
+
+    @keyframes bvpulse {
+
+        0%,
+        100% {
+            transform: scale(1)
+        }
+
+        50% {
+            transform: scale(1.12)
+        }
+    }
+
+    .bv-hero h1 {
+        font-family: var(--font-serif);
+        font-size: clamp(2rem, 5vw, 3rem);
+        background: linear-gradient(135deg, #c0605a, #9b59b6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+    }
+
+    .bv-hero p {
+        color: var(--color-text-muted);
+        font-style: italic;
+    }
+
+    .bv-count {
+        display: inline-block;
+        background: linear-gradient(135deg, #c0605a, #9b59b6);
+        color: #fff;
+        border-radius: 50px;
+        padding: 0.3rem 1.1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-top: 0.75rem;
+    }
+
+    .bv-grid {
+        columns: 4 200px;
+        column-gap: 1rem;
+    }
+
+    .bv-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(155, 89, 182, 0.12);
+        cursor: pointer;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        position: relative;
+    }
+
+    .bv-card:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 12px 32px rgba(155, 89, 182, 0.25);
+    }
+
+    .bv-card img {
+        width: 100%;
+        display: block;
+        object-fit: cover;
+        transition: transform 0.35s ease;
+    }
+
+    .bv-card:hover img {
+        transform: scale(1.04);
+    }
+
+    .bv-card__overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(155, 89, 182, 0.55) 0%, transparent 55%);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        display: flex;
+        align-items: flex-end;
+        padding: 0.75rem;
+    }
+
+    .bv-card:hover .bv-card__overlay {
+        opacity: 1;
+    }
+
+    .bv-card__overlay span {
+        color: #fff;
+        font-size: 0.82rem;
+        font-weight: 600;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .bv-card__body {
+        padding: 0.6rem 0.8rem 0.75rem;
+    }
+
+    .bv-card__caption {
+        font-size: 0.82rem;
+        color: var(--color-text);
+        margin: 0 0 0.2rem;
+    }
+
+    .bv-card__date {
+        font-size: 0.75rem;
+        color: #9b59b6;
+        font-style: italic;
+    }
+
+    .bv-lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(15, 5, 20, 0.93);
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .bv-lightbox.open {
+        display: flex;
+    }
+
+    .bv-lb__inner {
+        position: relative;
+        max-width: 900px;
+        width: 100%;
+        background: #fff;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 24px 60px rgba(155, 89, 182, 0.4);
+        animation: lbpop 0.28s ease both;
+    }
+
+    @keyframes lbpop {
+        from {
+            opacity: 0;
+            transform: scale(0.88) translateY(20px)
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0)
+        }
+    }
+
+    .bv-lb__media {
+        width: 100%;
+        max-height: 72vh;
+        background: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .bv-lb__media img {
+        max-width: 100%;
+        max-height: 72vh;
+        object-fit: contain;
+        display: block;
+    }
+
+    .bv-lb__footer {
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, #fdf6f0, #f8f0fb);
+        border-top: 1px solid #e8c8bf;
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .bv-lb__caption {
+        font-family: var(--font-serif);
+        font-size: 1rem;
+        color: var(--color-text);
+        margin: 0 0 0.15rem;
+    }
+
+    .bv-lb__date {
+        font-size: 0.82rem;
+        color: #9b59b6;
+        font-style: italic;
+    }
+
+    .bv-lb__close {
+        position: absolute;
+        top: 0.85rem;
+        right: 0.85rem;
+        width: 38px;
+        height: 38px;
+        background: rgba(155, 89, 182, 0.8);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        transition: background 0.2s;
+    }
+
+    .bv-lb__close:hover {
+        background: #9b59b6;
+    }
+
+    .bv-lb__arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        background: rgba(155, 89, 182, 0.75);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2;
+        transition: background 0.2s;
+    }
+
+    .bv-lb__arrow:hover {
+        background: #9b59b6;
+    }
+
+    .bv-lb__prev {
+        left: 0.85rem;
+    }
+
+    .bv-lb__next {
+        right: 0.85rem;
+    }
+
+    .bv-empty {
+        text-align: center;
+        padding: 5rem 2rem;
+        color: var(--color-text-muted);
+    }
+
+    @media (max-width:600px) {
+        .bv-grid {
+            columns: 2 150px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bv-page">
+    <div class="container">
+
+        <div class="bv-hero scroll-reveal scroll-reveal-fade-down">
+            <span class="bv-hero__icon">&#128149;</span>
+            <h1>BV — Best Vibes</h1>
+            <p>My best friend, my person &#10024;</p>
+            {% if total %}<span class="bv-count">{{ total }} photo{% if total != 1 %}s{% endif %}</span>{% endif %}
+        </div>
+
+        {% if photos %}
+        <div class="bv-grid scroll-stagger">
+            {% for photo in photos %}
+            <div class="bv-card scroll-reveal scroll-reveal-zoom-in" onclick="bvOpen({{ forloop.counter0 }})" role="button" tabindex="0"
+                aria-label="Open {{ photo.caption|default:'BV Photo' }}"
+                onkeydown="if(event.key==='Enter'||event.key===' ')bvOpen({{ forloop.counter0 }})">
+                <img src="{{ photo.photo.url }}" alt="{{ photo.alt_text|default:photo.caption|default:'BV Photo' }}"
+                    loading="lazy" onerror="this.closest('.bv-card').style.display='none'">
+                <div class="bv-card__overlay">{% if photo.caption %}<span>{{ photo.caption }}</span>{% endif %}</div>
+                {% if photo.caption or photo.date %}
+                <div class="bv-card__body">
+                    {% if photo.caption %}<p class="bv-card__caption">{{ photo.caption }}</p>{% endif %}
+                    {% if photo.date %}<span class="bv-card__date">{{ photo.date|date:"F j, Y" }}</span>{% endif %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bv-empty">
+            <p style="font-size:3rem">&#128149;</p>
+            <p>No BV photos yet — add some from the admin panel!</p>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<div class="bv-lightbox" id="bvLb" role="dialog" aria-modal="true">
+    <div class="bv-lb__inner">
+        <button class="bv-lb__close" onclick="bvClose()" aria-label="Close">&#10005;</button>
+        <button class="bv-lb__arrow bv-lb__prev" onclick="bvNav(-1)" aria-label="Previous">&#8592;</button>
+        <button class="bv-lb__arrow bv-lb__next" onclick="bvNav(1)" aria-label="Next">&#8594;</button>
+        <div class="bv-lb__media" id="bvMedia"></div>
+        <div class="bv-lb__footer">
+            <span style="font-size:1.5rem">&#128149;</span>
+            <div>
+                <p class="bv-lb__caption" id="bvCap"></p><span class="bv-lb__date" id="bvDate"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var BV = [{% for p in photos %}{ "u": "{{ p.photo.url }}", "c": "{{ p.caption|escapejs }}", "d": "{% if p.date %}{{ p.date|date:'F j, Y' }}{% endif %}", "a": "{{ p.alt_text|default:p.caption|escapejs }}" } {% if not forloop.last %}, {% endif %} {% endfor %}];
+    var bvIdx = 0;
+
+    function bvOpen(i) {
+        bvIdx = i;
+        bvRender();
+        const lb = document.getElementById('bvLb');
+        const inner = lb.querySelector('.bv-lb__inner');
+        
+        lb.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        if (window.gsap) {
+            gsap.fromTo(lb, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" });
+            gsap.fromTo(inner, { scale: 0.88, y: 30 }, { scale: 1, y: 0, duration: 0.4, ease: "back.out(1.4)" });
+        }
+    }
+
+    function bvClose() {
+        const lb = document.getElementById('bvLb');
+        const inner = lb.querySelector('.bv-lb__inner');
+        
+        if (window.gsap) {
+            gsap.to(inner, { scale: 0.88, y: 20, duration: 0.25, ease: "power2.in" });
+            gsap.to(lb, { opacity: 0, duration: 0.25, ease: "power2.in", onComplete: () => {
+                lb.style.display = 'none';
+                document.body.style.overflow = '';
+                document.getElementById('bvMedia').innerHTML = '';
+            }});
+        } else {
+            lb.style.display = 'none';
+            document.body.style.overflow = '';
+            document.getElementById('bvMedia').innerHTML = '';
+        }
+    }
+
+    function bvNav(d) {
+        bvIdx = (bvIdx + d + BV.length) % BV.length;
+        bvRender();
+        
+        // Minor scale pop on nav change
+        const img = document.querySelector('#bvMedia img');
+        if (img && window.gsap) {
+            gsap.fromTo(img, { scale: 0.95, opacity: 0.8 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" });
+        }
+    }
+
+    function bvRender() {
+        var p = BV[bvIdx];
+        var m = document.getElementById('bvMedia');
+        m.innerHTML = '';
+        var img = document.createElement('img');
+        img.src = p.u;
+        img.alt = p.a || p.c;
+        m.appendChild(img);
+        document.getElementById('bvCap').textContent = p.c || '';
+        document.getElementById('bvDate').textContent = p.d || '';
+    }
+
+    document.getElementById('bvLb').addEventListener('click', function (e) {
+        if (e.target === this) bvClose();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        const lb = document.getElementById('bvLb');
+        if (lb.style.display !== 'flex' && !lb.classList.contains('open')) return;
+        if (e.key === 'Escape') bvClose();
+        if (e.key === 'ArrowLeft') bvNav(-1);
+        if (e.key === 'ArrowRight') bvNav(1);
+    });
+
+    // Staggered card animation and mouse tilt effect
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.gsap) {
+            // Masonry grid card stagger entrance
+            gsap.from('.bv-card', {
+                opacity: 0,
+                y: 40,
+                scale: 0.95,
+                stagger: 0.08,
+                duration: 0.8,
+                ease: "back.out(1.2)",
+                delay: 0.15
+            });
+
+            // Card hover 3D tilt effect
+            document.querySelectorAll('.bv-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left - (rect.width / 2);
+                    const y = e.clientY - rect.top - (rect.height / 2);
+                    
+                    // Rotate based on relative coordinates
+                    gsap.to(card, {
+                        rotateX: -y / 10,
+                        rotateY: x / 10,
+                        scale: 1.025,
+                        duration: 0.35,
+                        ease: "power2.out"
+                    });
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, {
+                        rotateX: 0,
+                        rotateY: 0,
+                        scale: 1,
+                        duration: 0.45,
+                        ease: "power2.out"
+                    });
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

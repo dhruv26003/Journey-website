@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Gallery — Our Memories{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/gallery.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+    <h1 class="text-center mb-4 gallery-heading scroll-reveal scroll-reveal-fade-down">Our Memories</h1>
+
+    {% if pages %}
+
+    <div class="d-flex justify-content-center mb-4">
+        <div class="anim-selector scroll-reveal scroll-reveal-zoom-in" style="--scroll-delay: 150ms;" role="group" aria-label="Choose gallery animation">
+            <button class="btn-anim btn-anim--active" type="button" data-mode="book" aria-pressed="true">&#128218; Book Flip</button>
+            <button class="btn-anim" type="button" data-mode="fade" aria-pressed="false">&#10024; Fade In</button>
+            <button class="btn-anim" type="button" data-mode="carousel" aria-pressed="false">&#127904; Carousel</button>
+        </div>
+    </div>
+
+    <!-- ======================== BOOK MODE ======================== -->
+    <div class="book-flip-wrapper active scroll-reveal scroll-reveal-fade-up" style="--scroll-delay: 300ms;" aria-label="Memory gallery — book mode">
+        <div class="book-container" id="book-container" aria-live="polite" aria-atomic="true">
+            {% for spread in pages %}
+            <div class="page-spread {% if forloop.first %}active{% endif %}"
+                 data-spread="{{ forloop.counter0 }}"
+                 role="group"
+                 aria-label="Page {{ forloop.counter }} of {{ pages|length }}">
+
+                <div class="book-pages">
+                    {% with left=spread.0 right=spread.1 %}
+
+                    <!-- Left page -->
+                    <div class="page-panel page-left">
+                        <div class="page-inner">
+                            <div class="page-photo-wrap">
+                                {% if left.is_video %}
+                                    {% if left.video %}
+                                    <video src="{{ left.video.url }}" controls preload="metadata" loop
+                                        class="page-photo page-video"
+                                        aria-label="{{ left.alt_text|default:left.caption }}"></video>
+                                    {% endif %}
+                                    <span class="media-type-badge">&#127909; Video</span>
+                                {% else %}
+                                    {% if left.photo %}
+                                    <img src="{{ left.photo.url }}" alt="{{ left.alt_text|default:left.caption }}"
+                                        loading="lazy" class="page-photo">
+                                    {% else %}
+                                    <span style="color:rgba(180,90,70,0.3);font-size:2rem;">&#9825;</span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="page-caption">
+                                <p class="caption-text">{{ left.caption }}</p>
+                                {% if left.date %}<time class="caption-date" datetime="{{ left.date|date:'Y-m-d' }}">{{ left.date|date:"F j, Y" }}</time>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right page -->
+                    {% if right %}
+                    <div class="page-panel page-right">
+                        <div class="page-inner">
+                            <div class="page-photo-wrap">
+                                {% if right.is_video %}
+                                    {% if right.video %}
+                                    <video src="{{ right.video.url }}" controls preload="metadata" loop
+                                        class="page-photo page-video"
+                                        aria-label="{{ right.alt_text|default:right.caption }}"></video>
+                                    {% endif %}
+                                    <span class="media-type-badge">&#127909; Video</span>
+                                {% else %}
+                                    {% if right.photo %}
+                                    <img src="{{ right.photo.url }}" alt="{{ right.alt_text|default:right.caption }}"
+                                        loading="lazy" class="page-photo">
+                                    {% else %}
+                                    <span style="color:rgba(180,90,70,0.3);font-size:2rem;">&#9825;</span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            <div class="page-caption">
+                                <p class="caption-text">{{ right.caption }}</p>
+                                {% if right.date %}<time class="caption-date" datetime="{{ right.date|date:'Y-m-d' }}">{{ right.date|date:"F j, Y" }}</time>{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="page-panel page-right page-blank" aria-hidden="true">&#9825;</div>
+                    {% endif %}
+
+                    {% endwith %}
+                </div><!-- /.book-pages -->
+            </div><!-- /.page-spread -->
+            {% endfor %}
+        </div><!-- /#book-container -->
+    </div><!-- /.book-flip-wrapper -->
+
+    <!-- ======================== FADE MODE ======================== -->
+    <div class="fade-gallery-wrapper" id="fade-gallery-wrapper" aria-label="Memory gallery — fade in mode">
+        <div id="fade-cards-container" aria-live="polite" aria-atomic="true"
+            style="width:100%;display:flex;flex-direction:column;align-items:center;"></div>
+    </div>
+
+    <!-- ======================== CAROUSEL MODE ======================== -->
+    <div class="carousel-wrapper" id="carousel-wrapper" aria-label="Memory gallery — carousel mode">
+        <div class="carousel-track" id="carousel-track" aria-live="polite" aria-atomic="true"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="book-nav mt-3" aria-label="Gallery navigation">
+        <button id="btn-prev" class="btn-page btn-prev" type="button" aria-label="Previous" disabled>
+            <span aria-hidden="true">&#8592;</span> Prev
+        </button>
+        <span class="page-counter" id="page-counter" aria-live="polite">
+            <span id="current-page">1</span> / <span id="total-pages">{{ pages|length }}</span>
+        </span>
+        {% if pages|length < 2 %}
+        <button id="btn-next" class="btn-page btn-next" type="button" aria-label="Next" disabled>Next <span aria-hidden="true">&#8594;</span></button>
+        {% else %}
+        <button id="btn-next" class="btn-page btn-next" type="button" aria-label="Next">Next <span aria-hidden="true">&#8594;</span></button>
+        {% endif %}
+    </nav>
+
+    {% else %}
+    <div class="gallery-empty text-center py-5">
+        <p class="text-warm-muted fs-5">No memories have been added yet. Check back soon! &#9825;</p>
+    </div>
+    {% endif %}
+
+</div>
+
+{{ memories_json|json_script:"memories-data" }}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/bookflip.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,729 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home — Our Memories{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: var(--color-bg);
+    }
+
+    .hero-slideshow-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+
+    .hero-slide {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        transition: opacity 1.2s ease-in-out;
+    }
+
+    .hero-slide.active {
+        opacity: 1;
+    }
+
+    .hero-slide img,
+    .hero-slide video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .hero-slide-video-badge {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background: rgba(0, 0, 0, 0.45);
+        color: #fff;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 0.78rem;
+        pointer-events: none;
+        z-index: 3;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, rgba(253, 246, 240, 0.55) 0%, rgba(253, 246, 240, 0.72) 60%, rgba(253, 246, 240, 0.88) 100%);
+        z-index: 2;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 3;
+        text-align: center;
+        padding: 2rem 1.5rem;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* ---- Three.js 3D Background canvas ---- */
+    #three-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .hero-slideshow-bg {
+        z-index: 0;
+    }
+
+    .slideshow-dots {
+        z-index: 3;
+    }
+
+    .scroll-hint {
+        z-index: 3;
+    }
+
+    /* ---- New Content Sections ---- */
+    .journey-section {
+        background-color: var(--color-bg);
+        border-top: 1px solid var(--color-nav-border);
+    }
+    
+    .journey-title {
+        font-family: var(--font-serif);
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        color: var(--color-primary);
+        line-height: 1.3;
+    }
+    
+    .journey-description {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: var(--color-text);
+    }
+    
+    .journey-line {
+        display: inline-block;
+        width: 60px;
+        height: 2px;
+        background-color: var(--color-secondary);
+    }
+    
+    .journey-heart-icon {
+        color: var(--color-primary);
+        font-size: 1.2rem;
+        animation: heartbeat 2.5s ease-in-out infinite;
+    }
+    
+    .journey-card-visual {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(242, 196, 160, 0.4) 0%, rgba(232, 165, 152, 0.2) 100%);
+        border: 2px dashed var(--color-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .visual-heart-container {
+        width: 100px;
+        height: 100px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 24px rgba(192, 96, 90, 0.15);
+    }
+    
+    .visual-heart-svg {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .animate-heart {
+        animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    /* Teaser Cards */
+    .teaser-section {
+        background-color: var(--color-surface);
+        border-top: 1px solid var(--color-nav-border);
+        border-bottom: 1px solid var(--color-nav-border);
+    }
+    
+    .section-title {
+        font-family: var(--font-serif);
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        color: var(--color-primary);
+    }
+    
+    .italic-desc {
+        font-style: italic;
+        font-size: 1rem;
+    }
+    
+    .teaser-card {
+        background: #fff;
+        border: 1px solid rgba(232, 165, 152, 0.3);
+        border-radius: var(--border-radius);
+        padding: 2.25rem 1.75rem;
+        box-shadow: 0 4px 16px rgba(61, 43, 39, 0.05);
+        transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+    }
+    
+    .teaser-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(192, 96, 90, 0.15);
+        border-color: var(--color-primary);
+    }
+    
+    .teaser-card-icon-wrap {
+        width: 60px;
+        height: 60px;
+        background-color: var(--color-bg);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem;
+        border: 1px solid var(--color-nav-border);
+    }
+    
+    .teaser-card-title {
+        font-family: var(--font-serif);
+        color: var(--color-primary);
+        font-size: 1.35rem;
+    }
+    
+    .teaser-card-text {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+    }
+    
+    .teaser-card-link {
+        font-weight: 600;
+        color: var(--color-primary);
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1rem;
+        transition: transform 0.2s ease;
+    }
+    
+    .teaser-card:hover .teaser-card-link {
+        transform: translateX(4px);
+    }
+
+    /* Parallax Banner */
+    .quote-parallax-section {
+        position: relative;
+        min-height: 40vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: #000;
+        color: var(--color-text);
+        text-align: center;
+    }
+    
+    .quote-parallax-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        z-index: 1;
+        opacity: 0.85;
+        transform: scale(1.1);
+    }
+    
+    .parallax-quote {
+        font-family: var(--font-serif);
+        font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+        color: var(--color-primary);
+        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
+        font-style: italic;
+        line-height: 1.4;
+    }
+    
+    .quote-author {
+        font-size: 1.1rem;
+        font-weight: 500;
+        text-shadow: 0 1px 5px rgba(255, 255, 255, 0.8);
+    }
+
+    .hero-heading {
+        font-family: var(--font-serif);
+        font-size: clamp(2rem, 6vw, 4rem);
+        color: var(--color-primary);
+        line-height: 1.2;
+        margin-bottom: 1.25rem;
+        min-height: 1.4em;
+    }
+
+    .typewriter-cursor {
+        display: inline-block;
+        width: 3px;
+        height: 0.9em;
+        background-color: var(--color-primary);
+        margin-left: 3px;
+        vertical-align: text-bottom;
+        animation: blink-cursor 0.85s step-end infinite;
+    }
+
+    @keyframes blink-cursor {
+
+        0%,
+        100% {
+            opacity: 1
+        }
+
+        50% {
+            opacity: 0
+        }
+    }
+
+    .hero-welcome {
+        font-size: clamp(1rem, 2.5vw, 1.3rem);
+        color: var(--color-text);
+        margin-bottom: 2.5rem;
+        font-style: italic;
+        opacity: 0;
+        animation: fade-up 0.9s ease forwards 2.5s;
+    }
+
+    .hero-ctas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        opacity: 0;
+        animation: fade-up 0.9s ease forwards 3s;
+    }
+
+    .btn-hero-primary {
+        background-color: var(--color-primary);
+        color: #fff;
+        font-size: 1.1rem;
+        padding: 0.65rem 2rem;
+        border-radius: var(--border-radius);
+        transition: background-color var(--transition), transform 0.15s ease;
+        text-decoration: none;
+    }
+
+    .btn-hero-primary:hover,
+    .btn-hero-primary:focus {
+        background-color: var(--color-primary-hover);
+        color: #fff;
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .btn-hero-outline {
+        background-color: transparent;
+        border: 2px solid var(--color-primary);
+        color: var(--color-primary);
+        font-size: 1.1rem;
+        padding: 0.65rem 2rem;
+        border-radius: var(--border-radius);
+        transition: background-color var(--transition), color var(--transition), transform 0.15s ease;
+        text-decoration: none;
+    }
+
+    .btn-hero-outline:hover,
+    .btn-hero-outline:focus {
+        background-color: var(--color-primary);
+        color: #fff;
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .scroll-hint {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        opacity: 0;
+        animation: fade-up 0.9s ease forwards 3.5s;
+    }
+
+    .scroll-hint span {
+        display: block;
+        width: 28px;
+        height: 28px;
+        border-right: 3px solid var(--color-primary);
+        border-bottom: 3px solid var(--color-primary);
+        transform: rotate(45deg);
+        margin: 0 auto;
+        animation: bounce-arrow 1.6s ease-in-out infinite;
+    }
+
+    @keyframes bounce-arrow {
+
+        0%,
+        100% {
+            transform: rotate(45deg) translateY(0)
+        }
+
+        50% {
+            transform: rotate(45deg) translateY(6px)
+        }
+    }
+
+    .slideshow-dots {
+        position: absolute;
+        bottom: 4.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .slideshow-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: rgba(192, 96, 90, 0.4);
+        transition: background-color 0.3s ease, transform 0.3s ease, width 0.3s ease;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
+
+    .slideshow-dot.active {
+        background-color: var(--color-primary);
+        transform: scale(1.35);
+    }
+
+    .slideshow-dot[data-is-video="true"] {
+        border-radius: 3px;
+        width: 14px;
+    }
+
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(18px)
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0)
+        }
+    }
+
+    /* ---- Audio button ---- */
+    .audio-btn {
+        position: fixed;
+        bottom: 1.75rem;
+        right: 1.75rem;
+        z-index: 200;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: rgba(192, 96, 90, 0.92);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        box-shadow: 0 4px 18px rgba(192, 96, 90, 0.5);
+        transition: transform 0.2s ease, background 0.2s ease;
+        backdrop-filter: blur(4px);
+    }
+
+    .audio-btn:hover {
+        transform: scale(1.12);
+        background: rgba(160, 78, 73, 0.95);
+    }
+
+    .audio-btn.playing {
+        animation: audio-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes audio-pulse {
+
+        0%,
+        100% {
+            box-shadow: 0 4px 18px rgba(192, 96, 90, 0.5);
+        }
+
+        50% {
+            box-shadow: 0 4px 28px rgba(192, 96, 90, 0.8), 0 0 0 10px rgba(192, 96, 90, 0.12);
+        }
+    }
+
+    .audio-tooltip {
+        position: fixed;
+        bottom: 5rem;
+        right: 1.75rem;
+        z-index: 200;
+        background: rgba(61, 43, 39, 0.88);
+        color: #fff;
+        padding: 0.4rem 0.85rem;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 0.25s ease, transform 0.25s ease;
+        pointer-events: none;
+    }
+
+    .audio-tooltip.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+
+        .hero-slide,
+        .hero-welcome,
+        .hero-ctas,
+        .scroll-hint,
+        .typewriter-cursor {
+            animation: none !important;
+            opacity: 1 !important;
+        }
+
+        .hero-slide {
+            transition: none;
+        }
+
+        .hero-slide:not(.active) {
+            display: none;
+        }
+
+        #hero-heading {
+            min-height: unset;
+        }
+
+        .audio-btn.playing {
+            animation: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="hero-section" aria-label="Hero section">
+
+    {% if memories %}
+    <div class="hero-slideshow-bg" aria-hidden="true">
+        {% for memory in memories %}
+        <div class="hero-slide {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}"
+            data-is-video="{% if memory.is_video %}true{% else %}false{% endif %}">
+            {% if memory.is_video %}
+            {% if memory.video %}
+            <video src="{{ memory.video.url }}" autoplay muted loop playsinline
+                preload="{% if forloop.first %}auto{% else %}none{% endif %}"
+                aria-label="{{ memory.alt_text|default:memory.caption }}"></video>
+            <span class="hero-slide-video-badge">&#9654; Video</span>
+            {% endif %}
+            {% else %}
+            {% if memory.photo %}
+            <img src="{{ memory.photo.url }}" alt="{{ memory.alt_text|default:memory.caption }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                onerror="this.closest('.hero-slide').style.display='none'">
+            {% endif %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <canvas id="three-bg"></canvas>
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <div class="hero-content">
+        <h1 class="hero-heading">
+            <span id="hero-heading" data-text="{{ welcome_message|escapejs }}"></span>
+            <span class="typewriter-cursor" aria-hidden="true"></span>
+        </h1>
+        {% if welcome_message %}<p class="hero-welcome">{{ welcome_message }}</p>{% endif %}
+        <nav class="hero-ctas" aria-label="Explore the site">
+            <a href="/gallery/" class="btn btn-hero-primary">&#128444; Our Gallery</a>
+            <a href="/apology/" class="btn btn-hero-outline">&#9825; A Letter for You</a>
+        </nav>
+    </div>
+
+    {% if memories|length > 1 %}
+    <div class="slideshow-dots" role="tablist" aria-label="Slideshow navigation">
+        {% for memory in memories %}
+        <button class="slideshow-dot {% if forloop.first %}active{% endif %}" role="tab"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            aria-label="{% if memory.is_video %}Video{% else %}Photo{% endif %} {{ forloop.counter }}"
+            data-dot="{{ forloop.counter0 }}"
+            data-is-video="{% if memory.is_video %}true{% else %}false{% endif %}"></button>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="scroll-hint" aria-hidden="true"><span></span></div>
+
+</section>
+
+<!-- Journey Section -->
+<section class="journey-section py-5" aria-label="Our journey introduction">
+    <div class="container py-4">
+        <div class="row align-items-center">
+            <div class="col-md-6 journey-text-col scroll-reveal scroll-reveal-fade-right">
+                <h2 class="journey-title split-text">Every Moment With You is a Treasure</h2>
+                <p class="journey-description mt-3">
+                    From the very first conversation to the adventures we share today, every day is a beautiful memory. This space is dedicated to celebrating our love, our friendship, and the story we are writing together.
+                </p>
+                <div class="journey-decor mt-4 d-flex align-items-center gap-3">
+                    <span class="journey-line"></span>
+                    <span class="journey-heart-icon">&#10084;</span>
+                    <span class="journey-line"></span>
+                </div>
+            </div>
+            <div class="col-md-6 mt-4 mt-md-0 journey-visual-col d-flex justify-content-center scroll-reveal scroll-reveal-fade-left">
+                <div class="journey-card-visual glassmorphic-card">
+                    <div class="visual-circle"></div>
+                    <div class="visual-heart-container">
+                        <svg class="visual-heart-svg animate-heart" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="var(--color-primary)"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Teaser Grid Section -->
+<section class="teaser-section py-5" aria-label="Memory highlights">
+    <div class="container">
+        <div class="text-center mb-5 scroll-reveal scroll-reveal-fade-down">
+            <h2 class="section-title split-text">Chapters of Us</h2>
+            <p class="text-warm-muted italic-desc">Hover over each to see what makes it special</p>
+        </div>
+        <div class="row g-4 teaser-grid scroll-stagger">
+            <div class="col-md-4 scroll-reveal scroll-reveal-zoom-in">
+                <div class="teaser-card h-100">
+                    <div class="teaser-card-icon-wrap">
+                        <span class="teaser-icon">&#127775;</span>
+                    </div>
+                    <h3 class="teaser-card-title mt-3">The Beginning</h3>
+                    <p class="teaser-card-text">Where the spark was lit. Relive the early conversations and sweet first greetings that started it all.</p>
+                    <a href="/timeline/" class="teaser-card-link">Explore Timeline &rarr;</a>
+                </div>
+            </div>
+            <div class="col-md-4 scroll-reveal scroll-reveal-zoom-in">
+                <div class="teaser-card h-100">
+                    <div class="teaser-card-icon-wrap">
+                        <span class="teaser-icon">&#127752;</span>
+                    </div>
+                    <h3 class="teaser-card-title mt-3">Adventures</h3>
+                    <p class="teaser-card-text">Every trip, date, and quiet walk. The milestones and small moments that define our beautiful adventure.</p>
+                    <a href="/gallery/" class="teaser-card-link">View Gallery &rarr;</a>
+                </div>
+            </div>
+            <div class="col-md-4 scroll-reveal scroll-reveal-zoom-in">
+                <div class="teaser-card h-100">
+                    <div class="teaser-card-icon-wrap">
+                        <span class="teaser-icon">&#128149;</span>
+                    </div>
+                    <h3 class="teaser-card-title mt-3">Vibes & Fun</h3>
+                    <p class="teaser-card-text">The smiles, inside jokes, and best vibes. Celebrating the light, laughter, and happiness of our connection.</p>
+                    <a href="/bv/" class="teaser-card-link">Visit BV &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Love Quote Parallax Banner -->
+<section class="quote-parallax-section py-5" aria-label="A special note">
+    <div class="quote-parallax-bg" style="background-image: linear-gradient(rgba(253, 246, 240, 0.85), rgba(253, 246, 240, 0.85)), url('{% if memories %}{% with m=memories|first %}{{ m.media_url }}{% endwith %}{% endif %}');"></div>
+    <div class="container text-center py-5 position-relative z-index-2 scroll-reveal scroll-reveal-zoom-out">
+        <h2 class="parallax-quote split-text">"You are my today and all of my tomorrows."</h2>
+        <p class="quote-author mt-3 text-warm-muted">&mdash; Leo Christopher</p>
+    </div>
+</section>
+
+{% if background_audio_url %}
+<!-- Background audio -->
+<audio id="bg-audio" loop preload="none" src="{{ background_audio_url }}"></audio>
+<div class="audio-tooltip" id="audio-tooltip">Click to play music &#9835;</div>
+<button class="audio-btn" id="audio-btn" aria-label="Play background music" title="Toggle music">&#9835;</button>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/main.js' %}" defer></script>
+<script src="{% static 'js/animations.js' %}" defer></script>
+{% if background_audio_url %}
+<script>
+    (function () {
+        var audio = document.getElementById('bg-audio');
+        var btn = document.getElementById('audio-btn');
+        var tooltip = document.getElementById('audio-tooltip');
+        if (!audio || !btn) return;
+
+        var playing = false;
+
+        // Show tooltip on load for 3s
+        setTimeout(function () {
+            tooltip.classList.add('show');
+            setTimeout(function () { tooltip.classList.remove('show'); }, 3000);
+        }, 1500);
+
+        function play() {
+            audio.play().then(function () {
+                playing = true;
+                btn.innerHTML = '&#9646;&#9646;';
+                btn.setAttribute('aria-label', 'Pause background music');
+                btn.classList.add('playing');
+                tooltip.textContent = 'Music playing \u2665';
+                tooltip.classList.add('show');
+                setTimeout(function () { tooltip.classList.remove('show'); }, 1500);
+            }).catch(function () { });
+        }
+
+        function pause() {
+            audio.pause();
+            playing = false;
+            btn.innerHTML = '&#9835;';
+            btn.setAttribute('aria-label', 'Play background music');
+            btn.classList.remove('playing');
+            tooltip.textContent = 'Music paused';
+            tooltip.classList.add('show');
+            setTimeout(function () { tooltip.classList.remove('show'); }, 1500);
+        }
+
+        btn.addEventListener('click', function () {
+            if (playing) { pause(); } else { play(); }
+        });
+
+        // Auto-play on first user interaction anywhere on page
+        var firstInteraction = function () {
+            if (!playing) play();
+            document.removeEventListener('click', firstInteraction);
+            document.removeEventListener('keydown', firstInteraction);
+            document.removeEventListener('touchstart', firstInteraction);
+        };
+        document.addEventListener('click', firstInteraction);
+        document.addEventListener('keydown', firstInteraction);
+        document.addEventListener('touchstart', firstInteraction);
+    })();
+</script>
+{% endif %}
+{% endblock %}

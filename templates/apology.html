@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Apology — Our Memories{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/apology.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="apology-section" aria-label="Apology page">
+
+    <div class="apology-card">
+        <h1>A Letter for You &#9825;</h1>
+
+        <div class="apology-body">
+            {% if apology_message %}
+            {{ apology_message|safe }}
+            {% else %}
+            <p><em>No message yet — check back soon.</em></p>
+            {% endif %}
+        </div>
+    </div>
+
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/apology.js' %}" defer></script>
+{% endblock %}

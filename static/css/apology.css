@@ -1,0 +1,127 @@
+/* =========================================================
+   apology.css — Apology page styles for Our Memories
+   Warm typographic layout with floating petal animation
+   ========================================================= */
+
+/* ---- Full-screen centred layout ---- */
+.apology-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: var(--color-bg);
+    padding: 4rem 1.5rem;
+}
+
+/* ---- Letter card ---- */
+.apology-card {
+    position: relative;
+    z-index: 2;
+    max-width: 720px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.88);
+    border-radius: 1rem;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 8px 32px rgba(192, 96, 90, 0.12);
+    text-align: center;
+    animation: card-enter 0.8s ease-out both;
+}
+
+@keyframes card-enter {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---- Heading — visually distinct from body ---- */
+.apology-card h1 {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+}
+
+/* ---- Message body — serif, generous line-height ---- */
+.apology-body {
+    font-family: var(--font-serif);
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    color: var(--color-text);
+    line-height: 1.9;
+    text-align: left;
+}
+
+/* Keep paragraphs and emphasis comfortable to read */
+.apology-body p {
+    margin-bottom: 1.25rem;
+}
+
+.apology-body p:last-child {
+    margin-bottom: 0;
+}
+
+.apology-body em {
+    font-style: italic;
+    color: var(--color-primary);
+}
+
+/* ---- Floating petals / hearts (injected by apology.js) ---- */
+.petal {
+    position: fixed;
+    top: -40px;
+    font-size: 1.5rem;
+    opacity: 0;
+    pointer-events: none;
+    animation: fall linear forwards;
+    z-index: 1;
+}
+
+@keyframes fall {
+    0% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(105vh) rotate(360deg);
+    }
+}
+
+/* Respect reduced-motion preference (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+    .apology-card {
+        animation: none;
+    }
+
+    .petal {
+        display: none;
+    }
+}
+
+/* ---- Responsive tweaks ---- */
+@media (max-width: 576px) {
+    .apology-card {
+        padding: 2rem 1.25rem;
+    }
+}
+
+/* 320 px (smallest mobile) — tighten padding further so text is not cramped */
+@media (max-width: 360px) {
+    .apology-card {
+        padding: 1.5rem 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .apology-section {
+        padding: 2rem 0.75rem;
+    }
+}
