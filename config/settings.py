@@ -18,94 +18,10 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ============================================================
-# Jazzmin — Material-style Admin Theme
-# ============================================================
-JAZZMIN_SETTINGS = {
-    # Window title
-    "site_title": "Memories Admin",
-    # Header brand text
-    "site_header": "Memories",
-    # Brand text on login page
-    "site_brand": "♥ Memories",
-    # Welcome text on login screen
-    "welcome_sign": "Welcome back — sign in to manage your memories",
-    # Copyright footer
-    "copyright": "Made with ♥",
-    # Search model — search memories directly from header
-    "search_model": ["memories.Memory"],
-    # Top menu links
-    "topmenu_links": [
-        {"name": "View Site", "url": "/", "new_window": True},
-        {"name": "Gallery", "url": "/gallery/", "new_window": True},
-        {"name": "Apology", "url": "/apology/", "new_window": True},
-    ],
-    # Sidebar icons
-    "icons": {
-        "auth":                     "fas fa-users-cog",
-        "auth.user":                "fas fa-user",
-        "auth.Group":               "fas fa-users",
-        "memories.Memory":          "fas fa-image",
-        "memories.SiteSettings":    "fas fa-cog",
-    },
-    "default_icon_parents": "fas fa-chevron-circle-right",
-    "default_icon_children": "fas fa-circle",
-    # Sidebar style
-    "show_sidebar": True,
-    "navigation_expanded": True,
-    "hide_apps": ["auth"],      # hide auth from sidebar (keep it accessible)
-    "hide_models": [],
-    # Related modal
-    "related_modal_active": True,
-    # Custom CSS / JS
-    "custom_css": None,
-    "custom_js":  None,
-    # Use Bootstrap4 theme
-    "use_google_fonts_cdn": True,
-    "show_ui_builder": False,
-    # Change view
-    "changeform_format": "horizontal_tabs",
-    "changeform_format_overrides": {
-        "memories.memory":       "collapsible",
-        "memories.sitesettings": "flat",
-        "memories.bvphoto":      "flat",
-    },
-    "language_chooser": False,
-}
+# Custom Admin Branding
+ADMIN_SITE_HEADER = "Memories Insight Center"
+ADMIN_SITE_TITLE = "Memories Admin"
 
-JAZZMIN_UI_TWEAKS = {
-    # Theme: lux gives clean Material-like light theme
-    "navbar_small_text": False,
-    "footer_small_text": False,
-    "body_small_text":   False,
-    "brand_small_text":  False,
-    # Warm rose color scheme
-    "brand_colour":          "navbar-danger",   # rose/red navbar
-    "accent":                "accent-danger",
-    "navbar":                "navbar-white navbar-light",
-    "no_navbar_border":      False,
-    "navbar_fixed":          True,
-    "layout_boxed":          False,
-    "footer_fixed":          False,
-    "sidebar_fixed":         True,
-    "sidebar":               "sidebar-light-danger",   # light sidebar, rose active
-    "sidebar_nav_small_text": False,
-    "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": True,
-    "sidebar_nav_compact_style": False,
-    "sidebar_nav_legacy_style":  False,
-    "sidebar_nav_flat_style":    False,
-    "theme":                 "minty",   # minty = clean light Material-like
-    "dark_mode_theme":       None,
-    "button_classes": {
-        "primary":   "btn-outline-primary",
-        "secondary": "btn-outline-secondary",
-        "info":      "btn-info",
-        "warning":   "btn-warning",
-        "danger":    "btn-danger",
-        "success":   "btn-success",
-    },
-}
 
 
 
@@ -130,7 +46,6 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
-    "jazzmin",                          # must be before django.contrib.admin
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -216,6 +131,25 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Date formats: support DD/MM/YYYY (Indian/UK standard), DD-MM-YYYY, and standard ISO formats
+FORMAT_MODULE_PATH = [
+    'config.formats',
+]
+
+DATE_INPUT_FORMATS = [
+    '%d/%m/%Y',      # '16/06/2026', '16/6/2026'
+    '%d-%m-%Y',      # '16-06-2026', '16-6-2026'
+    '%Y-%m-%d',      # '2026-06-16'
+    '%m/%d/%Y',      # '06/16/2026'
+    '%d/%m/%y',      # '16/6/26'
+    '%d-%m-%y',      # '16-6-26'
+    '%Y/%m/%d',      # '2026/06/16'
+    '%b %d, %Y',     # 'Jun 16, 2026'
+    '%b. %d, %Y',    # 'Jun. 16, 2026'
+    '%d %B %Y',      # '16 June 2026'
+    '%B %d, %Y',      # 'June 16, 2026'
+]
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -235,7 +169,7 @@ STORAGES = {
 
 # Media files (user-uploaded content)
 MEDIA_URL = 'media/'
-MEDIA_ROOT = Path('C:/website_media')
+MEDIA_ROOT = config('MEDIA_ROOT', default=str(BASE_DIR / 'media'), cast=Path)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

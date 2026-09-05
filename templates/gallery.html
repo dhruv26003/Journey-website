@@ -4,126 +4,283 @@
 {% block title %}Gallery — Our Memories{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/gallery.css' %}">
+<link rel="stylesheet" href="{% static 'css/gallery.css' %}?v=2.1">
 {% endblock %}
 
 {% block content %}
 <div class="container py-4">
 
-    <h1 class="text-center mb-4 gallery-heading scroll-reveal scroll-reveal-fade-down">Our Memories</h1>
+    <div class="text-center mb-4">
+        <h1 class="gallery-heading scroll-reveal scroll-reveal-fade-down">Our Memories</h1>
+        <p class="text-warm-muted" style="font-size: 1.05rem; margin-top: 0.35rem;">
+            A beautiful chapter of our life, organized by year and month &#9825;
+        </p>
+    </div>
 
-    {% if pages %}
+    {% if total_gallery_count %}
 
-    <div class="d-flex justify-content-center mb-4">
-        <div class="anim-selector scroll-reveal scroll-reveal-zoom-in" style="--scroll-delay: 150ms;" role="group" aria-label="Choose gallery animation">
-            <button class="btn-anim btn-anim--active" type="button" data-mode="book" aria-pressed="true">&#128218; Book Flip</button>
-            <button class="btn-anim" type="button" data-mode="fade" aria-pressed="false">&#10024; Fade In</button>
-            <button class="btn-anim" type="button" data-mode="carousel" aria-pressed="false">&#127904; Carousel</button>
+    <!-- View Mode Switcher: Year & Month Archive vs. Animated Modes -->
+    <div class="view-modes-tabs scroll-reveal scroll-reveal-zoom-in" style="--scroll-delay: 100ms;">
+        <button class="btn-view-mode active" type="button" data-view="archive">
+            <i class="fas fa-calendar-alt"></i> Year & Month View
+        </button>
+        <button class="btn-view-mode" type="button" data-view="book">
+            <i class="fas fa-book-open"></i> Book Flip
+        </button>
+        <button class="btn-view-mode" type="button" data-view="carousel">
+            <i class="fas fa-film"></i> Carousel
+        </button>
+        <button class="btn-view-mode" type="button" data-view="fade">
+            <i class="fas fa-sparkles"></i> Fade In
+        </button>
+    </div>
+
+    <!-- ============================================================
+         1. YEAR & MONTH ARCHIVE VIEW (Default Main View)
+         ============================================================ -->
+    <div id="gallery-archive-view" class="gallery-archive-wrapper">
+        <!-- Quick Year Filter Pills Bar -->
+        {% if years_data|length > 0 %}
+        <div class="year-filter-bar scroll-reveal scroll-reveal-fade-down" style="--scroll-delay: 150ms;">
+            <button type="button" class="year-pill-btn active" data-year-filter="all">
+                <span>All Years</span>
+                <span class="pill-count">{{ total_gallery_count }}</span>
+            </button>
+            {% for y in years_data %}
+            <button type="button" class="year-pill-btn" data-year-filter="{{ y.year }}">
+                <span>{{ y.year }}</span>
+                <span class="pill-count">{{ y.count }}</span>
+            </button>
+            {% endfor %}
+            {% if undated_items %}
+            <button type="button" class="year-pill-btn" data-year-filter="undated">
+                <span>Special Moments</span>
+                <span class="pill-count">{{ undated_items|length }}</span>
+            </button>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Year-by-Year Sections Loop -->
+        {% for y in years_data %}
+        <section class="gallery-year-section scroll-reveal scroll-reveal-fade-up" id="year-section-{{ y.year }}" data-year-val="{{ y.year }}">
+            <!-- Year Header Banner -->
+            <div class="year-section-header">
+                <div class="year-title-wrap">
+                    <span class="year-number">{{ y.year }}</span>
+                    <span class="year-meta-badge">{{ y.count }} Memor{{ y.count|pluralize:"y,ies" }}</span>
+                </div>
+            </div>
+
+            <!-- Month-by-Month Blocks inside this Year -->
+            {% for m in y.months %}
+            <div class="gallery-month-block" id="month-block-{{ m.month_key }}">
+                <!-- Month Subtitle & Badge -->
+                <div class="month-header">
+                    <span class="month-icon-dot"></span>
+                    <h3 class="month-title">{{ m.month_name }} {{ y.year }}</h3>
+                    <span class="month-badge">{{ m.count }} item{{ m.count|pluralize }}</span>
+                </div>
+
+                <!-- Photos & Videos Grid for this Month -->
+                <div class="gallery-media-grid">
+                    {% for item in m.items %}
+                    <div class="gallery-card" data-index="{{ forloop.counter0 }}" data-src="{{ item.media_url }}" data-type="{{ item.media_type }}" data-caption="{{ item.caption }}" data-date="{{ item.date|date:'F j, Y' }}" data-alt="{{ item.alt_text|default:item.caption }}">
+                        <div class="media-thumb-wrap">
+                            {% if item.is_video %}
+                                {% if item.video %}
+                                <video src="{{ item.video.url }}" class="gallery-video-preview" muted preload="metadata" loop playsinline></video>
+                                {% endif %}
+                                <div class="video-play-overlay"><i class="fas fa-play"></i></div>
+                                <span class="media-badge video-badge"><i class="fas fa-video"></i> Video</span>
+                            {% else %}
+                                {% if item.photo %}
+                                <img src="{{ item.photo.url }}" alt="{{ item.alt_text|default:item.caption }}" loading="lazy" class="gallery-photo-thumb">
+                                {% endif %}
+                                <div class="photo-hover-overlay"><i class="fas fa-search-plus"></i></div>
+                                <span class="media-badge photo-badge"><i class="fas fa-camera"></i> Photo</span>
+                            {% endif %}
+                        </div>
+                        <div class="gallery-card-info">
+                            <p class="card-caption">{{ item.caption|default:"A special memory" }}</p>
+                            {% if item.date %}
+                            <span class="card-date"><i class="far fa-clock"></i> {{ item.date|date:"F j, Y" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        {% endfor %}
+
+        <!-- Undated Items Section if any -->
+        {% if undated_items %}
+        <section class="gallery-year-section scroll-reveal scroll-reveal-fade-up" id="year-section-undated" data-year-val="undated">
+            <div class="year-section-header">
+                <div class="year-title-wrap">
+                    <span class="year-number" style="font-size: 2.2rem;">Special Moments</span>
+                    <span class="year-meta-badge">{{ undated_items|length }} Memories</span>
+                </div>
+            </div>
+            <div class="gallery-media-grid">
+                {% for item in undated_items %}
+                <div class="gallery-card" data-src="{{ item.media_url }}" data-type="{{ item.media_type }}" data-caption="{{ item.caption }}" data-date="Timeless" data-alt="{{ item.alt_text|default:item.caption }}">
+                    <div class="media-thumb-wrap">
+                        {% if item.is_video %}
+                            {% if item.video %}
+                            <video src="{{ item.video.url }}" class="gallery-video-preview" muted preload="metadata" loop playsinline></video>
+                            {% endif %}
+                            <div class="video-play-overlay"><i class="fas fa-play"></i></div>
+                            <span class="media-badge video-badge"><i class="fas fa-video"></i> Video</span>
+                        {% else %}
+                            {% if item.photo %}
+                            <img src="{{ item.photo.url }}" alt="{{ item.alt_text|default:item.caption }}" loading="lazy" class="gallery-photo-thumb">
+                            {% endif %}
+                            <div class="photo-hover-overlay"><i class="fas fa-search-plus"></i></div>
+                            <span class="media-badge photo-badge"><i class="fas fa-camera"></i> Photo</span>
+                        {% endif %}
+                    </div>
+                    <div class="gallery-card-info">
+                        <p class="card-caption">{{ item.caption }}</p>
+                        <span class="card-date"><i class="far fa-heart"></i> Timeless Memory</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+
+
+    <!-- ============================================================
+         2. INTERACTIVE ANIMATED MODES (Book Flip, Fade, Carousel)
+         ============================================================ -->
+    <div id="gallery-interactive-container" style="display: none;">
+        <!-- BOOK MODE -->
+        <div class="book-flip-wrapper" id="book-flip-wrapper" aria-label="Memory gallery — book mode">
+            <div class="book-container" id="book-container" aria-live="polite" aria-atomic="true">
+                {% for spread in pages %}
+                <div class="page-spread {% if forloop.first %}active{% endif %}"
+                     data-spread="{{ forloop.counter0 }}"
+                     role="group"
+                     aria-label="Page {{ forloop.counter }} of {{ pages|length }}">
+
+                    <div class="book-pages">
+                        {% with left=spread.0 right=spread.1 %}
+
+                        <!-- Left page -->
+                        <div class="page-panel page-left">
+                            <div class="page-inner">
+                                <div class="page-photo-wrap">
+                                    {% if left.is_video %}
+                                        {% if left.video %}
+                                        <video src="{{ left.video.url }}" controls preload="metadata" loop
+                                            class="page-photo page-video"
+                                            aria-label="{{ left.alt_text|default:left.caption }}"></video>
+                                        {% endif %}
+                                        <span class="media-type-badge">&#127909; Video</span>
+                                    {% else %}
+                                        {% if left.photo %}
+                                        <img src="{{ left.photo.url }}" alt="{{ left.alt_text|default:left.caption }}"
+                                            loading="lazy" class="page-photo">
+                                        {% else %}
+                                        <span style="color:rgba(180,90,70,0.3);font-size:2rem;">&#9825;</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="page-caption">
+                                    <p class="caption-text">{{ left.caption }}</p>
+                                    {% if left.date %}<time class="caption-date" datetime="{{ left.date|date:'Y-m-d' }}">{{ left.date|date:"F j, Y" }}</time>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right page -->
+                        {% if right %}
+                        <div class="page-panel page-right">
+                            <div class="page-inner">
+                                <div class="page-photo-wrap">
+                                    {% if right.is_video %}
+                                        {% if right.video %}
+                                        <video src="{{ right.video.url }}" controls preload="metadata" loop
+                                            class="page-photo page-video"
+                                            aria-label="{{ right.alt_text|default:right.caption }}"></video>
+                                        {% endif %}
+                                        <span class="media-type-badge">&#127909; Video</span>
+                                    {% else %}
+                                        {% if right.photo %}
+                                        <img src="{{ right.photo.url }}" alt="{{ right.alt_text|default:right.caption }}"
+                                            loading="lazy" class="page-photo">
+                                        {% else %}
+                                        <span style="color:rgba(180,90,70,0.3);font-size:2rem;">&#9825;</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div class="page-caption">
+                                    <p class="caption-text">{{ right.caption }}</p>
+                                    {% if right.date %}<time class="caption-date" datetime="{{ right.date|date:'Y-m-d' }}">{{ right.date|date:"F j, Y" }}</time>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="page-panel page-right page-blank" aria-hidden="true">&#9825;</div>
+                        {% endif %}
+
+                        {% endwith %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- FADE MODE -->
+        <div class="fade-gallery-wrapper" id="fade-gallery-wrapper" aria-label="Memory gallery — fade in mode">
+            <div id="fade-cards-container" aria-live="polite" aria-atomic="true"
+                style="width:100%;display:flex;flex-direction:column;align-items:center;"></div>
+        </div>
+
+        <!-- CAROUSEL MODE -->
+        <div class="carousel-wrapper" id="carousel-wrapper" aria-label="Memory gallery — carousel mode">
+            <div class="carousel-track" id="carousel-track" aria-live="polite" aria-atomic="true"></div>
+        </div>
+
+        <!-- Navigation Bar for Interactive Modes -->
+        <nav class="book-nav mt-3" id="interactive-nav" aria-label="Gallery navigation">
+            <button id="btn-prev" class="btn-page btn-prev" type="button" aria-label="Previous" disabled>
+                <span aria-hidden="true">&#8592;</span> Prev
+            </button>
+            <span class="page-counter" id="page-counter" aria-live="polite">
+                <span id="current-page">1</span> / <span id="total-pages">{{ pages|length }}</span>
+            </span>
+            {% if pages|length < 2 %}
+            <button id="btn-next" class="btn-page btn-next" type="button" aria-label="Next" disabled>Next <span aria-hidden="true">&#8594;</span></button>
+            {% else %}
+            <button id="btn-next" class="btn-page btn-next" type="button" aria-label="Next">Next <span aria-hidden="true">&#8594;</span></button>
+            {% endif %}
+        </nav>
+    </div>
+
+    <!-- ============================================================
+         3. FULLSCREEN LIGHTBOX MODAL
+         ============================================================ -->
+    <div class="gallery-lightbox-modal" id="gallery-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="lightbox-content-box">
+            <button class="lightbox-close-btn" id="lightbox-close" title="Close Lightbox">&times;</button>
+            <button class="lightbox-nav-btn lightbox-prev-btn" id="lightbox-prev" title="Previous Item">&#8592;</button>
+            <button class="lightbox-nav-btn lightbox-next-btn" id="lightbox-next" title="Next Item">&#8594;</button>
+            
+            <div class="lightbox-media-holder" id="lightbox-media-holder">
+                <!-- Dynamically injected img or video -->
+            </div>
+            
+            <div class="lightbox-caption-bar">
+                <p class="lightbox-caption-text" id="lightbox-caption"></p>
+                <span class="lightbox-date-text" id="lightbox-date"></span>
+            </div>
         </div>
     </div>
-
-    <!-- ======================== BOOK MODE ======================== -->
-    <div class="book-flip-wrapper active scroll-reveal scroll-reveal-fade-up" style="--scroll-delay: 300ms;" aria-label="Memory gallery — book mode">
-        <div class="book-container" id="book-container" aria-live="polite" aria-atomic="true">
-            {% for spread in pages %}
-            <div class="page-spread {% if forloop.first %}active{% endif %}"
-                 data-spread="{{ forloop.counter0 }}"
-                 role="group"
-                 aria-label="Page {{ forloop.counter }} of {{ pages|length }}">
-
-                <div class="book-pages">
-                    {% with left=spread.0 right=spread.1 %}
-
-                    <!-- Left page -->
-                    <div class="page-panel page-left">
-                        <div class="page-inner">
-                            <div class="page-photo-wrap">
-                                {% if left.is_video %}
-                                    {% if left.video %}
-                                    <video src="{{ left.video.url }}" controls preload="metadata" loop
-                                        class="page-photo page-video"
-                                        aria-label="{{ left.alt_text|default:left.caption }}"></video>
-                                    {% endif %}
-                                    <span class="media-type-badge">&#127909; Video</span>
-                                {% else %}
-                                    {% if left.photo %}
-                                    <img src="{{ left.photo.url }}" alt="{{ left.alt_text|default:left.caption }}"
-                                        loading="lazy" class="page-photo">
-                                    {% else %}
-                                    <span style="color:rgba(180,90,70,0.3);font-size:2rem;">&#9825;</span>
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                            <div class="page-caption">
-                                <p class="caption-text">{{ left.caption }}</p>
-                                {% if left.date %}<time class="caption-date" datetime="{{ left.date|date:'Y-m-d' }}">{{ left.date|date:"F j, Y" }}</time>{% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right page -->
-                    {% if right %}
-                    <div class="page-panel page-right">
-                        <div class="page-inner">
-                            <div class="page-photo-wrap">
-                                {% if right.is_video %}
-                                    {% if right.video %}
-                                    <video src="{{ right.video.url }}" controls preload="metadata" loop
-                                        class="page-photo page-video"
-                                        aria-label="{{ right.alt_text|default:right.caption }}"></video>
-                                    {% endif %}
-                                    <span class="media-type-badge">&#127909; Video</span>
-                                {% else %}
-                                    {% if right.photo %}
-                                    <img src="{{ right.photo.url }}" alt="{{ right.alt_text|default:right.caption }}"
-                                        loading="lazy" class="page-photo">
-                                    {% else %}
-                                    <span style="color:rgba(180,90,70,0.3);font-size:2rem;">&#9825;</span>
-                                    {% endif %}
-                                {% endif %}
-                            </div>
-                            <div class="page-caption">
-                                <p class="caption-text">{{ right.caption }}</p>
-                                {% if right.date %}<time class="caption-date" datetime="{{ right.date|date:'Y-m-d' }}">{{ right.date|date:"F j, Y" }}</time>{% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    {% else %}
-                    <div class="page-panel page-right page-blank" aria-hidden="true">&#9825;</div>
-                    {% endif %}
-
-                    {% endwith %}
-                </div><!-- /.book-pages -->
-            </div><!-- /.page-spread -->
-            {% endfor %}
-        </div><!-- /#book-container -->
-    </div><!-- /.book-flip-wrapper -->
-
-    <!-- ======================== FADE MODE ======================== -->
-    <div class="fade-gallery-wrapper" id="fade-gallery-wrapper" aria-label="Memory gallery — fade in mode">
-        <div id="fade-cards-container" aria-live="polite" aria-atomic="true"
-            style="width:100%;display:flex;flex-direction:column;align-items:center;"></div>
-    </div>
-
-    <!-- ======================== CAROUSEL MODE ======================== -->
-    <div class="carousel-wrapper" id="carousel-wrapper" aria-label="Memory gallery — carousel mode">
-        <div class="carousel-track" id="carousel-track" aria-live="polite" aria-atomic="true"></div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="book-nav mt-3" aria-label="Gallery navigation">
-        <button id="btn-prev" class="btn-page btn-prev" type="button" aria-label="Previous" disabled>
-            <span aria-hidden="true">&#8592;</span> Prev
-        </button>
-        <span class="page-counter" id="page-counter" aria-live="polite">
-            <span id="current-page">1</span> / <span id="total-pages">{{ pages|length }}</span>
-        </span>
-        {% if pages|length < 2 %}
-        <button id="btn-next" class="btn-page btn-next" type="button" aria-label="Next" disabled>Next <span aria-hidden="true">&#8594;</span></button>
-        {% else %}
-        <button id="btn-next" class="btn-page btn-next" type="button" aria-label="Next">Next <span aria-hidden="true">&#8594;</span></button>
-        {% endif %}
-    </nav>
 
     {% else %}
     <div class="gallery-empty text-center py-5">
@@ -137,5 +294,169 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/bookflip.js' %}" defer></script>
+<script src="{% static 'js/bookflip.js' %}?v=2.0" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 1. View Mode Toggling (Archive vs Book vs Carousel vs Fade)
+    var viewBtns = document.querySelectorAll('.btn-view-mode');
+    var archiveView = document.getElementById('gallery-archive-view');
+    var interactiveContainer = document.getElementById('gallery-interactive-container');
+    var bookWrap = document.getElementById('book-flip-wrapper');
+    var fadeWrap = document.getElementById('fade-gallery-wrapper');
+    var carouselWrap = document.getElementById('carousel-wrapper');
+    var interactiveNav = document.getElementById('interactive-nav');
+
+    viewBtns.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            viewBtns.forEach(function (b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            var mode = btn.getAttribute('data-view');
+
+            if (mode === 'archive') {
+                if (archiveView) archiveView.style.display = 'block';
+                if (interactiveContainer) interactiveContainer.style.display = 'none';
+            } else {
+                if (archiveView) archiveView.style.display = 'none';
+                if (interactiveContainer) interactiveContainer.style.display = 'block';
+
+                // Trigger bookflip mode change via click event on anim selector if available
+                if (bookWrap) bookWrap.classList.toggle('active', mode === 'book');
+                if (fadeWrap) fadeWrap.classList.toggle('active', mode === 'fade');
+                if (carouselWrap) carouselWrap.classList.toggle('active', mode === 'carousel');
+                
+                // Dispatch custom event to sync with bookflip.js if needed
+                window.dispatchEvent(new CustomEvent('switchGalleryMode', { detail: { mode: mode } }));
+            }
+        });
+    });
+
+    // 2. Year Filter Pills Handler
+    var yearPills = document.querySelectorAll('.year-pill-btn');
+    var yearSections = document.querySelectorAll('.gallery-year-section');
+
+    yearPills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+            yearPills.forEach(function (p) { p.classList.remove('active'); });
+            pill.classList.add('active');
+            var selectedYear = pill.getAttribute('data-year-filter');
+
+            yearSections.forEach(function (sec) {
+                var secYear = sec.getAttribute('data-year-val');
+                if (selectedYear === 'all' || secYear === selectedYear) {
+                    sec.style.display = 'block';
+                    sec.style.opacity = '1';
+                } else {
+                    sec.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // 3. Fullscreen Lightbox Handler
+    var cards = Array.from(document.querySelectorAll('.gallery-card'));
+    var lightbox = document.getElementById('gallery-lightbox');
+    var mediaHolder = document.getElementById('lightbox-media-holder');
+    var captionText = document.getElementById('lightbox-caption');
+    var dateText = document.getElementById('lightbox-date');
+    var closeBtn = document.getElementById('lightbox-close');
+    var prevBtn = document.getElementById('lightbox-prev');
+    var nextBtn = document.getElementById('lightbox-next');
+    var currentCardIndex = 0;
+
+    function openLightbox(index) {
+        if (!cards.length || index < 0 || index >= cards.length) return;
+        currentCardIndex = index;
+        var card = cards[index];
+        var src = card.getAttribute('data-src');
+        var type = card.getAttribute('data-type');
+        var caption = card.getAttribute('data-caption') || '';
+        var date = card.getAttribute('data-date') || '';
+        var alt = card.getAttribute('data-alt') || caption;
+
+        mediaHolder.innerHTML = '';
+        if (type === 'video') {
+            var video = document.createElement('video');
+            video.src = src;
+            video.controls = true;
+            video.autoplay = true;
+            video.playsInline = true;
+            video.loop = true;
+            mediaHolder.appendChild(video);
+        } else {
+            var img = document.createElement('img');
+            img.src = src;
+            img.alt = alt;
+            mediaHolder.appendChild(img);
+        }
+
+        if (captionText) captionText.textContent = caption;
+        if (dateText) dateText.textContent = date;
+        if (lightbox) {
+            lightbox.classList.add('active');
+            lightbox.setAttribute('aria-hidden', 'false');
+        }
+    }
+
+    function closeLightbox() {
+        if (lightbox) {
+            lightbox.classList.remove('active');
+            lightbox.setAttribute('aria-hidden', 'true');
+            // Pause any running videos in lightbox
+            var v = mediaHolder.querySelector('video');
+            if (v) v.pause();
+            mediaHolder.innerHTML = '';
+        }
+    }
+
+    cards.forEach(function (card, idx) {
+        card.addEventListener('click', function () {
+            openLightbox(idx);
+        });
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+    if (lightbox) {
+        lightbox.addEventListener('click', function (e) {
+            if (e.target === lightbox) closeLightbox();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var newIdx = (currentCardIndex - 1 + cards.length) % cards.length;
+            openLightbox(newIdx);
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var newIdx = (currentCardIndex + 1) % cards.length;
+            openLightbox(newIdx);
+        });
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (!lightbox || !lightbox.classList.contains('active')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft' && prevBtn) prevBtn.click();
+        if (e.key === 'ArrowRight' && nextBtn) nextBtn.click();
+    });
+
+    // Auto hover play for video previews in cards
+    var videoCards = document.querySelectorAll('.gallery-card[data-type="video"]');
+    videoCards.forEach(function (vc) {
+        var vid = vc.querySelector('video');
+        if (!vid) return;
+        vc.addEventListener('mouseenter', function () {
+            vid.play().catch(function () {});
+        });
+        vc.addEventListener('mouseleave', function () {
+            vid.pause();
+            vid.currentTime = 0;
+        });
+    });
+});
+</script>
 {% endblock %}

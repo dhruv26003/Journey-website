@@ -1,67 +1,152 @@
 /* =========================================================
    apology.css — Apology page styles for Our Memories
-   Warm typographic layout with floating petal animation
+   Wax-sealed 3D Envelope and Lined-Paper Love Letter Layout
    ========================================================= */
 
-/* ---- Full-screen centred layout ---- */
 .apology-section {
     position: relative;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     background-color: var(--color-bg);
-    padding: 4rem 1.5rem;
+    padding: 6rem 1.5rem 4rem;
 }
 
-/* ---- Letter card ---- */
-.apology-card {
+/* 3D Envelope Container */
+.envelope-wrapper {
     position: relative;
-    z-index: 2;
-    max-width: 720px;
     width: 100%;
-    background: rgba(255, 255, 255, 0.88);
-    border-radius: 1rem;
+    max-width: 560px;
+    height: 380px;
+    margin-top: 2rem;
+    perspective: 1200px; /* Crucial for 3D depth */
+}
+
+/* Envelope base */
+.envelope {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #f5e6df; /* Match navbar peach-cream */
+    border-radius: 8px;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.3, 1);
+    box-shadow: 0 10px 30px rgba(61, 43, 39, 0.08);
+    cursor: pointer;
+}
+
+/* Flap that folds open */
+.envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background-color: #eedcd4; /* Darker warm peach */
+    clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+    transform-origin: top center;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.3, 1), z-index 0.2s step-end;
+    z-index: 4;
+}
+
+/* Front pocket fold */
+.envelope-front {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 62%;
+    background-color: #fcefe7; /* Lightest tint */
+    clip-path: polygon(0% 100%, 0% 0%, 50% 68%, 100% 0%, 100% 100%);
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    box-shadow: 0 -2px 10px rgba(61, 43, 39, 0.02);
+    z-index: 3;
+}
+
+/* Wax Seal */
+.envelope-seal {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -20%) scale(1.0);
+    width: 52px;
+    height: 52px;
+    background: radial-gradient(circle, #e74c3c 0%, #c0392b 100%);
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+    z-index: 5;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.3, 1), opacity 0.5s ease;
+    user-select: none;
+}
+
+/* Outer edge details of wax seal */
+.envelope-seal::before {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+}
+
+.envelope:hover .envelope-seal {
+    transform: translate(-50%, -20%) scale(1.12) rotate(15deg);
+}
+
+/* The Letter Sheet Inside */
+.envelope-letter {
+    position: absolute;
+    bottom: 4%;
+    left: 4%;
+    width: 92%;
+    height: 90%;
+    background-color: #ffffff;
+    border-radius: 4px;
+    z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.3, 1), height 0.8s cubic-bezier(0.25, 1, 0.3, 1), opacity 0.5s ease, visibility 0.5s step-start, z-index 0.1s step-end;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.03), 0 4px 12px rgba(0,0,0,0.05);
+    overflow-y: auto;
+}
+
+.letter-sheet {
     padding: 3rem 2.5rem;
-    box-shadow: 0 8px 32px rgba(192, 96, 90, 0.12);
-    text-align: center;
-    animation: card-enter 0.8s ease-out both;
+    min-height: 100%;
+    /* Elegant lined paper background texture */
+    background: linear-gradient(#e8c8bf 1px, transparent 1px) 0 0 / 100% 28px;
+    background-color: #fffdfb;
 }
 
-@keyframes card-enter {
-    from {
-        opacity: 0;
-        transform: translateY(24px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ---- Heading — visually distinct from body ---- */
-.apology-card h1 {
+.letter-title {
     font-family: var(--font-serif);
-    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
     color: var(--color-primary);
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.02em;
+    margin-bottom: 2rem;
+    text-align: center;
+    border-bottom: 2px double var(--color-secondary);
+    padding-bottom: 0.5rem;
 }
 
-/* ---- Message body — serif, generous line-height ---- */
 .apology-body {
     font-family: var(--font-serif);
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-size: clamp(1rem, 2.2vw, 1.15rem);
     color: var(--color-text);
-    line-height: 1.9;
+    line-height: 28px; /* Must align with background-size line height */
     text-align: left;
 }
 
-/* Keep paragraphs and emphasis comfortable to read */
 .apology-body p {
-    margin-bottom: 1.25rem;
+    margin-bottom: 28px; /* Match single line spacing */
+    text-indent: 1.5rem;
 }
 
 .apology-body p:last-child {
@@ -73,55 +158,84 @@
     color: var(--color-primary);
 }
 
-/* ---- Floating petals / hearts (injected by apology.js) ---- */
-.petal {
-    position: fixed;
-    top: -40px;
-    font-size: 1.5rem;
+/* Opened Envelope State Styles */
+.envelope.open {
+    transform: translateY(140px); /* Move down to center letter on screen */
+    box-shadow: 0 4px 15px rgba(61, 43, 39, 0.04);
+}
+
+.envelope.open .envelope-flap {
+    transform: rotateX(180deg);
+    z-index: 1; /* Hide flap behind pocket once opened */
+}
+
+.envelope.open .envelope-seal {
+    transform: translate(-50%, -20%) scale(0.7) rotate(45deg);
     opacity: 0;
     pointer-events: none;
-    animation: fall linear forwards;
-    z-index: 1;
 }
 
-@keyframes fall {
-    0% {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg);
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(105vh) rotate(360deg);
-    }
+.envelope.open .envelope-letter {
+    transform: translateY(-220px) translateZ(10px); /* Push up out of pocket safely */
+    height: 440px; /* Expand tall enough, but keep fully in viewport */
+    z-index: 15; /* Front layer */
+    opacity: 1;
+    visibility: visible;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.3, 1), height 0.8s cubic-bezier(0.25, 1, 0.3, 1), opacity 0.5s ease 0.2s, visibility 0.5s step-end 0.2s;
+    box-shadow: 0 15px 40px rgba(61, 43, 39, 0.18);
 }
 
-/* Respect reduced-motion preference (accessibility) */
+/* Hover hint below envelope */
+.envelope-tip {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    font-style: italic;
+    margin-top: 2rem;
+    transition: opacity 0.3s ease;
+}
+
+.envelope.open + .envelope-tip {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Accessibility: Reduced motion overrides */
 @media (prefers-reduced-motion: reduce) {
-    .apology-card {
-        animation: none;
+    .envelope-wrapper {
+        perspective: none;
     }
-
-    .petal {
-        display: none;
+    
+    .envelope.open {
+        transform: none;
+    }
+    
+    .envelope.open .envelope-letter {
+        transform: translateY(-100px);
+        height: auto;
+        min-height: 380px;
     }
 }
 
-/* ---- Responsive tweaks ---- */
+/* Responsive tweaks for mobile viewports */
 @media (max-width: 576px) {
-    .apology-card {
+    .envelope-wrapper {
+        max-width: 100%;
+        height: 280px;
+    }
+    
+    .letter-sheet {
         padding: 2rem 1.25rem;
     }
-}
 
-/* 320 px (smallest mobile) — tighten padding further so text is not cramped */
-@media (max-width: 360px) {
-    .apology-card {
-        padding: 1.5rem 1rem;
-        border-radius: 0.5rem;
+    .envelope.open {
+        transform: translateY(90px);
     }
-
-    .apology-section {
-        padding: 2rem 0.75rem;
+    
+    .envelope.open .envelope-letter {
+        transform: translateY(-240px) translateZ(10px);
+        height: 400px;
+        width: 96%;
+        left: 2%;
     }
 }

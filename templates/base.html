@@ -8,12 +8,14 @@
     <title>{% block title %}Our Memories{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}?v=2.2">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.css">
     <style>
         .navbar-warm {
-            background-color: #f5e6df !important;
-            border-bottom: 1px solid #e8c8bf;
+            background-color: rgba(245, 230, 223, 0.78) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(232, 200, 191, 0.5);
         }
 
         @media (max-width: 767.98px) {
@@ -105,6 +107,31 @@
 </head>
 
 <body>
+    <!-- Canvas for Sakura & Heart background particles -->
+    <canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+    <!-- Cute Romantic Custom Cursor -->
+    <div id="custom-cursor-aura" class="custom-cursor" aria-hidden="true" style="opacity: 0;"></div>
+    <div id="custom-cursor-heart" class="custom-cursor" aria-hidden="true" style="opacity: 0;">
+        <svg class="cursor-heart-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="cursorHeartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff758c"/>
+                    <stop offset="50%" stop-color="#ff4b6e"/>
+                    <stop offset="100%" stop-color="#c0605a"/>
+                </linearGradient>
+                <filter id="cursorHeartGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="1.5" stdDeviation="2.5" flood-color="#ff4b6e" flood-opacity="0.6"/>
+                </filter>
+            </defs>
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                  fill="url(#cursorHeartGrad)"
+                  stroke="#ffffff"
+                  stroke-width="1.2"
+                  filter="url(#cursorHeartGlow)"/>
+        </svg>
+    </div>
+
     <a href="#main-content" class="skip-to-content">Skip to main content</a>
     <nav class="navbar navbar-expand-md navbar-warm" aria-label="Main navigation">
         <div class="container">
@@ -188,13 +215,17 @@
         });
     </script>
 
+    <script src="{% static 'js/global_effects.js' %}?v=2.1" defer></script>
     <script src="{% static 'js/scroll-reveal.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
 
     {% if background_audio_url %}
     <audio id="siteAudio" src="{{ background_audio_url }}" loop preload="none"></audio>
     <div class="audio-tip" id="audioTip">&#9835; Click anywhere to play music</div>
-    <button class="audio-fab" id="audioBtn" aria-label="Toggle background music">&#9835;</button>
+    <button class="audio-fab" id="audioBtn" aria-label="Toggle background music">
+        <span class="audio-icon-sym">&#9835;</span>
+        <span class="audio-visualizer" aria-hidden="true"></span>
+    </button>
     <script>
         (function () {
             var a = document.getElementById('siteAudio');

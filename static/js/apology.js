@@ -1,114 +1,129 @@
 /**
- * apology.js — Floating petal / heart background & letter typing reveal for the Apology page
+ * apology.js — Interactive 3D Envelope Opening & Lined-Paper Letter Reveal
  */
 
 (function () {
     'use strict';
 
     // 1. Accessibility guard
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        return;
-    }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     /* -------------------------------------------------------
-       GSAP Floating Hearts / Petals
+       Typewriter Letter Text Reveal (via GSAP & SplitType)
        ------------------------------------------------------- */
-    const SYMBOLS = ['\u2764', '\u273F', '\u2665', '\u2728']; // ❤ ✿ ♥ ✨
-    const SPAWN_INTERVAL_MS = 600;
+    let revealTimeline = null;
 
-    function spawnHeart() {
-        const symbol = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
-        const el = document.createElement('span');
-        el.className = 'petal';
-        el.setAttribute('aria-hidden', 'true');
-        el.textContent = symbol;
-        
-        // Style variables
-        const size = gsap.utils.random(1.2, 2.4);
-        el.style.fontSize = size + 'rem';
-        
-        // Random warm tones
-        const colors = ['#c0605a', '#e8a598', '#f2c4a0', '#9b59b6'];
-        el.style.color = colors[Math.floor(Math.random() * colors.length)];
-        
-        el.style.left = gsap.utils.random(0, 95) + 'vw';
-        el.style.top = '-50px';
-        
-        document.body.appendChild(el);
-
-        // GSAP falling motion with sway and spin
-        gsap.fromTo(el, 
-            { y: 0, opacity: 0, rotation: 0 },
-            { 
-                y: window.innerHeight + 100, 
-                opacity: gsap.utils.random(0.35, 0.85), 
-                rotation: gsap.utils.random(180, 720),
-                x: "+=" + gsap.utils.random(-80, 80),
-                duration: gsap.utils.random(6, 12),
-                ease: "none",
-                onComplete: () => {
-                    el.remove();
-                }
-            }
-        );
-        
-        // Fade in initially
-        gsap.to(el, { opacity: gsap.utils.random(0.4, 0.9), duration: 1.5 });
-    }
-
-    function initFloatingPetals() {
-        if (!window.gsap) return;
-        
-        // Spawn at a steady rate
-        setInterval(spawnHeart, SPAWN_INTERVAL_MS);
-    }
-
-    /* -------------------------------------------------------
-       SplitType Letter Reveal
-       ------------------------------------------------------- */
-    function initLetterReveal() {
+    function buildLetterReveal() {
         const apologyBody = document.querySelector('.apology-body');
-        const heading = document.querySelector('.apology-card h1');
+        const heading = document.querySelector('.letter-title');
         
-        if (!apologyBody || !window.gsap || !window.SplitType) return;
+        if (!apologyBody || !window.gsap || !window.SplitType) return null;
 
-        const tl = gsap.timeline();
+        const tl = gsap.timeline({ paused: true });
 
-        // 1. Reveal heading first
+        // 1. Fade in heading first
         if (heading) {
             const headingSplit = new SplitType(heading, { types: 'chars' });
             tl.from(headingSplit.chars, {
                 opacity: 0,
-                y: 20,
+                y: 15,
                 stagger: 0.04,
-                duration: 0.8,
+                duration: 0.7,
                 ease: "back.out(1.5)",
                 onComplete: () => headingSplit.revert()
             });
         }
 
-        // 2. Select all paragraphs/lines in letter body and reveal them word-by-word
-        const elementsToSplit = apologyBody.querySelectorAll('p, blockquote, em');
-        if (elementsToSplit.length > 0) {
-            elementsToSplit.forEach((element) => {
-                const split = new SplitType(element, { types: 'words' });
-                tl.from(split.words, {
-                    opacity: 0,
-                    y: 10,
-                    stagger: 0.04,
-                    duration: 0.65,
-                    ease: "power2.out"
-                }, "-=0.2"); // overlap slightly with previous element
-            });
+        // 2. Select paragraphs/lines in letter body and reveal them word-by-word
+        let elementsToSplit = Array.from(apologyBody.querySelectorAll('p, blockquote, em, li'));
+        if (elementsToSplit.length === 0) {
+            // If the body has raw text and no standard block elements, split the body itself!
+            elementsToSplit = [apologyBody];
         }
+
+        elementsToSplit.forEach((element) => {
+            const split = new SplitType(element, { types: 'words' });
+            tl.from(split.words, {
+                opacity: 0,
+                y: 8,
+                stagger: 0.03,
+                duration: 0.55,
+                ease: "power2.out"
+            }, "-=0.15"); // overlap slightly with previous element
+        });
+
+        return tl;
+    }
+
+    /* -------------------------------------------------------
+       3D Envelope Interactions
+       ------------------------------------------------------- */
+    function initEnvelope() {
+        const envelope = document.getElementById('envelope');
+        const letter = document.getElementById('envelope-letter');
+        if (!envelope || !letter) return;
+
+        // Build the text reveal timeline ahead of time
+        revealTimeline = buildLetterReveal();
+
+        let isOpen = false;
+
+        function openLetter() {
+            if (isOpen) return;
+            isOpen = true;
+
+            envelope.classList.add('open');
+            envelope.setAttribute('aria-label', 'The letter is open');
+
+            // Sequential timing adjustments matching CSS transition durations
+            
+            // 1. Wait for flap flip to end (0.6s) before shifting flap z-index
+            setTimeout(() => {
+                const flap = envelope.querySelector('.envelope-flap');
+                if (flap) {
+                    flap.style.zIndex = '1'; // Push flap behind pocket
+                }
+            }, 550);
+
+            // 2. Wait for envelope slide-up to fully open (0.8s) before starting text reveal
+            setTimeout(() => {
+                letter.focus();
+                if (revealTimeline) {
+                    revealTimeline.play();
+                }
+            }, 750);
+        }
+
+        // Handle mouse click
+        envelope.addEventListener('click', (e) => {
+            // Prevent triggering if clicked inside the letter itself (e.g. scrolling text)
+            if (e.target.closest('#envelope-letter')) return;
+            openLetter();
+        });
+
+        // Handle keyboard navigation (Space / Enter)
+        envelope.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openLetter();
+            }
+        });
     }
 
     /* -------------------------------------------------------
        Bootstrap
        ------------------------------------------------------- */
     document.addEventListener('DOMContentLoaded', () => {
-        initFloatingPetals();
-        initLetterReveal();
+        initEnvelope();
+        
+        // If reduced motion is preferred, immediately trigger typing reveal
+        if (prefersReducedMotion && revealTimeline) {
+            const envelope = document.getElementById('envelope');
+            if (envelope) {
+                envelope.classList.add('open');
+            }
+            revealTimeline.play();
+        }
     });
 
 })();

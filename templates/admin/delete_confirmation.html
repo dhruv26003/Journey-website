@@ -1,0 +1,257 @@
+{% extends "admin/base.html" %}
+{% load i18n admin_urls static %}
+
+{% block title %}{% translate "Confirm Deletion" %} | Memories Insight Center{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ media }}
+    <script src="{% static 'admin/js/cancel.js' %}" async></script>
+{% endblock %}
+
+{% block content %}
+<div class="delete-confirmation-container">
+    <div class="delete-confirm-card">
+        <!-- Warning Header -->
+        <div class="delete-card-header">
+            <div class="delete-warning-icon">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <div>
+                <h1 class="delete-title">Delete {{ object_name|capfirst }}</h1>
+                <p class="delete-subtitle">Are you sure you want to delete "<strong>{{ object }}</strong>"? This action cannot be undone.</p>
+            </div>
+        </div>
+
+        {% if perms_lacking %}
+        <div class="delete-alert-box alert-danger">
+            <i class="fas fa-ban"></i>
+            <div>
+                <strong>Permission Required:</strong>
+                <p>You do not have permission to delete the following related items:</p>
+                <ul>{{ perms_lacking|unordered_list }}</ul>
+            </div>
+        </div>
+        <div class="delete-actions-bar">
+            <a href="javascript:history.back();" class="btn-cancel-delete"><i class="fas fa-arrow-left"></i> Go Back</a>
+        </div>
+        {% elif protected %}
+        <div class="delete-alert-box alert-danger">
+            <i class="fas fa-shield-alt"></i>
+            <div>
+                <strong>Protected Objects:</strong>
+                <p>Cannot delete because the following related objects are protected:</p>
+                <ul>{{ protected|unordered_list }}</ul>
+            </div>
+        </div>
+        <div class="delete-actions-bar">
+            <a href="javascript:history.back();" class="btn-cancel-delete"><i class="fas fa-arrow-left"></i> Go Back</a>
+        </div>
+        {% else %}
+
+        <!-- Items Summary Vault Box -->
+        <div class="delete-items-box">
+            <div class="items-box-header">
+                <span class="badge-count">1</span>
+                <span>The following object and related records will be removed:</span>
+            </div>
+            <div class="items-scroll-list">
+                <ul>{{ deleted_objects|unordered_list }}</ul>
+            </div>
+        </div>
+
+        <!-- Form Submission -->
+        <form method="post" class="delete-form-actions">
+            {% csrf_token %}
+            <input type="hidden" name="post" value="yes">
+            {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1">{% endif %}
+            {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
+
+            <div class="delete-buttons-wrap">
+                <button type="submit" class="btn-danger-confirm">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Yes, I’m sure — Delete</span>
+                </button>
+                <a href="#" class="btn-cancel-delete button cancel-link">
+                    <span>No, take me back</span>
+                </a>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Delete Confirmation Modal Card Styles */
+.delete-confirmation-container {
+    max-width: 680px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.delete-confirm-card {
+    background: #ffffff;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 20px;
+    padding: 2.25rem;
+    box-shadow: 0 15px 45px -10px rgba(239, 68, 68, 0.12), 0 4px 15px rgba(0,0,0,0.04);
+}
+
+.delete-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.delete-warning-icon {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 14px;
+    background: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.delete-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.35rem 0;
+    line-height: 1.2;
+}
+
+.delete-subtitle {
+    font-size: 0.92rem;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.delete-items-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem;
+    margin-bottom: 1.75rem;
+}
+
+.items-box-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.85rem;
+}
+
+.badge-count {
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.items-scroll-list {
+    max-height: 220px;
+    overflow-y: auto;
+    font-size: 0.88rem;
+    color: #475569;
+}
+
+.items-scroll-list ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.items-scroll-list li {
+    padding: 0.45rem 0.6rem;
+    background: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 8px;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.items-scroll-list li::before {
+    content: "•";
+    color: #ef4444;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.items-scroll-list a {
+    color: #0f172a;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.items-scroll-list a:hover {
+    color: #ef4444;
+}
+
+.delete-buttons-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-danger-confirm {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 0.75rem 1.75rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.35) !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-danger-confirm:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 22px rgba(239, 68, 68, 0.45) !important;
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
+}
+
+.btn-cancel-delete {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-cancel-delete:hover {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+    transform: translateY(-1px) !important;
+}
+</style>
+{% endblock %}

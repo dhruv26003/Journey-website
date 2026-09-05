@@ -279,4 +279,372 @@ img {
         transition: none !important;
         transition-delay: 0s !important;
     }
+}
+
+/* =========================================================
+   New Premium Interactive Styles
+   ========================================================= */
+
+/* Custom Romantic Heart Cursor & Trail */
+.custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 999999;
+    will-change: transform, opacity;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+#custom-cursor-heart {
+    width: 24px;
+    height: 24px;
+    margin-top: -3px;
+    margin-left: -3px;
+    pointer-events: none !important;
+}
+
+#custom-cursor-heart .cursor-heart-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform-origin: center center;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.2s ease;
+    filter: drop-shadow(0 2px 7px rgba(255, 75, 110, 0.55));
+}
+
+#custom-cursor-aura {
+    width: 34px;
+    height: 34px;
+    margin-top: -17px;
+    margin-left: -17px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 117, 140, 0.22) 0%, rgba(242, 196, 160, 0.12) 60%, transparent 80%);
+    border: 1.5px solid rgba(255, 117, 140, 0.45);
+    box-shadow: 0 0 12px rgba(255, 117, 140, 0.3);
+    z-index: 999998;
+    pointer-events: none !important;
+    transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, opacity 0.25s ease, box-shadow 0.2s ease;
+}
+
+/* Hover States on Clickable Elements - scale inner SVG without affecting parent translate3d position */
+#custom-cursor-heart.cursor-hover .cursor-heart-svg {
+    transform: scale(1.3);
+    filter: drop-shadow(0 0 14px rgba(255, 75, 110, 0.95)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.85));
+}
+
+#custom-cursor-aura.cursor-hover {
+    background: radial-gradient(circle, rgba(255, 75, 110, 0.28) 0%, rgba(255, 183, 197, 0.15) 60%, transparent 80%);
+    border-color: rgba(255, 75, 110, 0.75);
+    box-shadow: 0 0 18px rgba(255, 75, 110, 0.5);
+}
+
+/* Mouse Click Active State */
+#custom-cursor-heart.cursor-click .cursor-heart-svg {
+    transform: scale(0.85) !important;
+}
+
+/* Floating Heart & Sparkle Motion Trail */
+.cursor-trail-particle {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 999990;
+    user-select: none;
+    line-height: 1;
+    animation: cursorTrailFade 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    will-change: transform, opacity;
+    text-shadow: 0 0 8px rgba(255, 117, 140, 0.7);
+}
+
+@keyframes cursorTrailFade {
+    0% {
+        opacity: 0.95;
+        transform: translate3d(var(--start-x), var(--start-y), 0) scale(1) rotate(0deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(var(--end-x), var(--end-y), 0) scale(0.2) rotate(var(--rot, 25deg));
+    }
+}
+
+/* Hide default cursor on desktop when custom cursor is active */
+@media (min-width: 768px) {
+    html, body, a, button, [role="button"], .memory-card, .bv-card, .year-btn, .nav-link, .envelope, .btn-hero-primary, .btn-hero-outline {
+        cursor: none !important;
+    }
+}
+
+/* Canvas background */
+#particles-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1; /* Above background blocks, behind text/elements */
+}
+
+/* Music Visualizer Overlay on Audio FAB */
+.audio-fab {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 14px;
+    width: auto !important; /* Allow width to expand for visualizer */
+    min-width: 52px;
+    border-radius: 26px !important;
+}
+
+.audio-icon-sym {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.audio-fab.playing .audio-icon-sym {
+    transform: rotate(15deg) scale(0.9);
+}
+
+.audio-visualizer {
+    display: none; /* Hidden by default */
+    align-items: flex-end;
+    gap: 3px;
+    height: 16px;
+    margin-left: 2px;
+}
+
+.audio-fab.playing .audio-visualizer {
+    display: inline-flex; /* Show when playing */
+}
+
+.visualizer-bar {
+    display: inline-block;
+    width: 3px;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 2px;
+    transform: scaleY(0.2);
+    transform-origin: bottom;
+    transition: transform 0.1s ease;
+}
+
+/* Live Memory Counter Widget */
+.memory-counter-section {
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-nav-border);
+    border-bottom: 1px solid var(--color-nav-border);
+}
+
+.counter-grid {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.counter-box {
+    background: #ffffff;
+    border: 1px solid rgba(232, 165, 152, 0.25);
+    border-radius: var(--border-radius);
+    padding: 1.25rem 2rem;
+    min-width: 120px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(61, 43, 39, 0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.counter-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(192, 96, 90, 0.1);
+}
+
+.counter-number {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+.counter-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+}
+
+/* Dual Milestone Cards */
+.milestone-card {
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(232, 165, 152, 0.35);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(61, 43, 39, 0.05);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.milestone-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(192, 96, 90, 0.12);
+}
+
+.milestone-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+}
+
+.milestone-icon {
+    font-size: 2.2rem;
+    line-height: 1;
+}
+
+.milestone-title {
+    font-family: var(--font-serif);
+    font-size: 1.55rem;
+    color: var(--color-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.milestone-date {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    margin-top: 3px;
+}
+
+.milestone-card .counter-grid {
+    gap: 0.75rem;
+}
+
+.milestone-card .counter-box {
+    padding: 1rem 0.75rem;
+    min-width: 75px;
+    flex: 1 1 70px;
+}
+
+.milestone-card .counter-number {
+    font-size: clamp(1.6rem, 3vw, 2.3rem);
+}
+
+/* Reasons card deck */
+.card-deck-section {
+    background-color: var(--color-bg);
+}
+
+.deck-container {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    height: 280px;
+    margin: 3rem auto 2rem;
+    perspective: 1000px;
+}
+
+.swipe-card {
+    position: absolute;
+    inset: 0;
+    background: #ffffff;
+    border: 1px solid rgba(232, 165, 152, 0.3);
+    border-radius: 18px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 10px 30px rgba(61, 43, 39, 0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transform-origin: 50% 100%;
+    user-select: none;
+    transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease;
+}
+
+/* Stacked rotation effect */
+.swipe-card:nth-last-child(1) {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    z-index: 10;
+    cursor: grab;
+}
+
+.swipe-card:nth-last-child(2) {
+    transform: translate3d(0, 8px, -15px) rotate(-1.5deg);
+    z-index: 9;
+    opacity: 0.95;
+}
+
+.swipe-card:nth-last-child(3) {
+    transform: translate3d(0, 16px, -30px) rotate(1.5deg);
+    z-index: 8;
+    opacity: 0.9;
+}
+
+.swipe-card:nth-last-child(n+4) {
+    transform: translate3d(0, 24px, -45px) rotate(0deg);
+    z-index: 7;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.swipe-card:active {
+    cursor: grabbing;
+}
+
+.swipe-card:hover {
+    box-shadow: 0 16px 40px rgba(192, 96, 90, 0.12);
+}
+
+.swipe-card-icon {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.swipe-card-text {
+    font-family: var(--font-serif);
+    font-size: 1.22rem;
+    line-height: 1.6;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.deck-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn-deck {
+    background: #ffffff;
+    border: 1px solid var(--color-secondary);
+    color: var(--color-primary);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.25s ease;
+}
+
+.btn-deck:hover {
+    background: var(--color-primary);
+    color: #ffffff;
+    box-shadow: 0 5px 15px rgba(192, 96, 90, 0.3);
+    scale: 1.08;
 }

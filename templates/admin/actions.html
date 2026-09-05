@@ -1,0 +1,32 @@
+{% load i18n %}
+<div class="saas-actions-toolbar">
+    <div class="actions-primary-group">
+        <!-- Prominent Red Delete Selected Button (native submit button) -->
+        <button type="submit" name="index" value="{{ action_index|default:0 }}" class="btn-delete-selected" id="btn-delete-selected-outside" title="Delete selected items">
+            <i class="fas fa-trash-alt"></i>
+            <span>Delete Selected</span>
+        </button>
+
+        <!-- Selection count pill -->
+        <div class="selection-pill-badge">
+            <span class="selection-indicator-dot"></span>
+            <span class="selection-text"><strong id="selected-count-number">0</strong> of {{ cl.result_count|default:"all" }} selected</span>
+        </div>
+    </div>
+
+    <div class="actions-secondary-group">
+        <!-- Hidden Django action form fields -->
+        <input type="hidden" name="select_across" value="0" class="select-across" id="id_select_across">
+
+        <!-- More actions dropdown -->
+        <div class="actions-dropdown-wrapper">
+            <label for="action-select-dropdown-{{ action_index|default:0 }}" class="action-dropdown-label">Other Actions:</label>
+            <select name="action" id="action-select-dropdown-{{ action_index|default:0 }}" class="saas-action-select" required>
+                {% for entry in action_form.fields.action.choices %}
+                    <option value="{{ entry.0 }}" {% if entry.0 == action_form.initial.action %}selected{% endif %}>{{ entry.1 }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-action-go-pill" title="Run action" name="index" value="{{ action_index|default:0 }}">Go</button>
+        </div>
+    </div>
+</div>

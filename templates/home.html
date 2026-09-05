@@ -5,6 +5,41 @@
 
 {% block extra_css %}
 <style>
+    /* ---- Full-Page Ambient Background Video ---- */
+    .home-fixed-video-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -2;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    #home-bg-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        filter: brightness(0.92) contrast(1.04);
+        transform: translate3d(0, 0, 0) scale(1.02);
+        will-change: transform;
+    }
+
+    .home-fixed-video-tint {
+        position: absolute;
+        inset: 0;
+        /* Warm romantic translucent scrim - moving video remains clearly visible while text is 100% readable */
+        background: radial-gradient(circle at 50% 30%, rgba(253, 246, 240, 0.2) 0%, rgba(253, 246, 240, 0.42) 50%, rgba(253, 246, 240, 0.65) 100%);
+        backdrop-filter: blur(1.5px);
+        -webkit-backdrop-filter: blur(1.5px);
+    }
+
+    body {
+        background-color: transparent !important;
+    }
+
     .hero-section {
         position: relative;
         min-height: 100vh;
@@ -12,7 +47,8 @@
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        background-color: var(--color-bg);
+        background-color: transparent !important;
+        z-index: 2;
     }
 
     .hero-slideshow-bg {
@@ -56,7 +92,12 @@
     .hero-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to bottom, rgba(253, 246, 240, 0.55) 0%, rgba(253, 246, 240, 0.72) 60%, rgba(253, 246, 240, 0.88) 100%);
+        background: linear-gradient(
+            to bottom,
+            rgba(253, 246, 240, 0.12) 0%,
+            rgba(253, 246, 240, 0.32) 60%,
+            rgba(253, 246, 240, 0.52) 100%
+        ) !important;
         z-index: 2;
     }
 
@@ -67,6 +108,140 @@
         padding: 2rem 1.5rem;
         max-width: 800px;
         margin: 0 auto;
+    }
+
+    /* Ambient Video Sound Pill */
+    .home-video-sound-pill {
+        position: fixed;
+        bottom: 1.75rem;
+        left: 1.75rem;
+        z-index: 9000;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        padding: 0.55rem 1.15rem;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1.5px solid rgba(180, 90, 70, 0.28);
+        border-radius: 50px;
+        color: var(--color-primary);
+        font-size: 0.88rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        transition: all 0.25s ease;
+    }
+
+    .home-video-sound-pill:hover {
+        background: rgba(255, 255, 255, 0.98);
+        border-color: var(--color-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(180, 90, 70, 0.25);
+    }
+
+    .home-video-sound-pill.unmuted {
+        background: var(--color-primary);
+        color: #ffffff;
+        border-color: var(--color-primary);
+    }
+
+    /* Translucent Sections with Frosted Blur across the entire page */
+    .memory-counter-section {
+        position: relative;
+        z-index: 2;
+        background: rgba(253, 246, 240, 0.36) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        border-top: 1px solid rgba(232, 200, 191, 0.35) !important;
+        border-bottom: 1px solid rgba(232, 200, 191, 0.35) !important;
+    }
+
+    .milestone-card {
+        background: rgba(255, 255, 255, 0.76) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+        box-shadow: 0 16px 40px rgba(180, 90, 70, 0.12) !important;
+    }
+
+    .counter-box {
+        background: rgba(255, 255, 255, 0.85) !important;
+        border: 1px solid rgba(180, 90, 70, 0.16) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+    }
+
+    .journey-section {
+        position: relative;
+        z-index: 2;
+        background: rgba(253, 246, 240, 0.42) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        border-top: 1px solid rgba(232, 200, 191, 0.35) !important;
+        border-bottom: 1px solid rgba(232, 200, 191, 0.35) !important;
+    }
+
+    .journey-card-visual {
+        background: rgba(255, 255, 255, 0.72) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+        box-shadow: 0 16px 36px rgba(180, 90, 70, 0.12) !important;
+    }
+
+    .teaser-section {
+        position: relative;
+        z-index: 2;
+        background: rgba(253, 246, 240, 0.38) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        border-bottom: 1px solid rgba(232, 200, 191, 0.35) !important;
+    }
+
+    .teaser-card {
+        background: rgba(255, 255, 255, 0.8) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+        box-shadow: 0 12px 32px rgba(180, 90, 70, 0.1) !important;
+    }
+
+    .card-deck-section {
+        position: relative;
+        z-index: 2;
+        background: rgba(253, 246, 240, 0.42) !important;
+        backdrop-filter: blur(8px) !important;
+        -webkit-backdrop-filter: blur(8px) !important;
+        border-bottom: 1px solid rgba(232, 200, 191, 0.35) !important;
+    }
+
+    .swipe-card {
+        background: rgba(255, 255, 255, 0.88) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+        box-shadow: 0 16px 40px rgba(180, 90, 70, 0.15) !important;
+    }
+
+    .quote-parallax-section {
+        position: relative;
+        z-index: 2;
+        background: rgba(253, 246, 240, 0.32) !important;
+        backdrop-filter: blur(6px) !important;
+        -webkit-backdrop-filter: blur(6px) !important;
+        padding: 6rem 1.5rem !important;
+    }
+
+    .quote-glass-card {
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1.5px solid rgba(255, 255, 255, 0.9);
+        border-radius: 28px;
+        padding: 3.5rem 2.5rem;
+        max-width: 820px;
+        margin: 0 auto;
+        box-shadow: 0 20px 50px rgba(180, 90, 70, 0.15);
     }
 
     /* ---- Three.js 3D Background canvas ---- */
@@ -224,42 +399,100 @@
         transform: translateX(4px);
     }
 
-    /* Parallax Banner */
+    /* Love Quote Video Banner */
     .quote-parallax-section {
         position: relative;
-        min-height: 40vh;
+        min-height: 48vh;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        background-color: #000;
+        background-color: var(--color-bg);
         color: var(--color-text);
         text-align: center;
+        padding: 4.5rem 1.5rem;
     }
     
+    .quote-video-wrapper {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .quote-parallax-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+    }
+
+    .quote-video-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            to bottom,
+            rgba(253, 246, 240, 0.72) 0%,
+            rgba(253, 246, 240, 0.82) 50%,
+            rgba(253, 246, 240, 0.88) 100%
+        );
+        backdrop-filter: blur(1.5px);
+        z-index: 2;
+    }
+
     .quote-parallax-bg {
         position: absolute;
         inset: 0;
         background-size: cover;
         background-position: center;
         z-index: 1;
-        opacity: 0.85;
-        transform: scale(1.1);
+        opacity: 0.9;
+        transform: scale(1.05);
     }
     
     .parallax-quote {
         font-family: var(--font-serif);
-        font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+        font-size: clamp(1.6rem, 3.8vw, 2.7rem);
         color: var(--color-primary);
-        text-shadow: 0 2px 10px rgba(255, 255, 255, 0.8);
+        text-shadow: 0 2px 14px rgba(255, 255, 255, 0.95);
         font-style: italic;
         line-height: 1.4;
     }
     
     .quote-author {
-        font-size: 1.1rem;
-        font-weight: 500;
-        text-shadow: 0 1px 5px rgba(255, 255, 255, 0.8);
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: var(--color-text);
+        text-shadow: 0 1px 6px rgba(255, 255, 255, 0.95);
+    }
+
+    .quote-sound-btn {
+        position: absolute;
+        bottom: 1.25rem;
+        right: 1.5rem;
+        z-index: 4;
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(192, 96, 90, 0.3);
+        color: var(--color-primary);
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        transition: transform 0.2s ease, background-color 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .quote-sound-btn:hover {
+        transform: scale(1.1);
+        background: #fff;
     }
 
     .hero-heading {
@@ -521,6 +754,23 @@
 {% endblock %}
 
 {% block content %}
+
+{% if home_video_url or banner_video_url %}
+<!-- ==================== PERSISTENT FULL-PAGE AMBIENT BACKGROUND VIDEO ==================== -->
+<div class="home-fixed-video-canvas" aria-hidden="true">
+    <video id="home-bg-video" autoplay muted loop playsinline preload="auto">
+        <source src="{{ home_video_url|default:banner_video_url }}" type="video/mp4">
+    </video>
+    <div class="home-fixed-video-tint"></div>
+</div>
+
+<!-- Floating Ambient Video Sound Toggle (Bottom-Left) -->
+<button class="home-video-sound-pill" id="home-video-sound-toggle" title="Unmute background video" aria-label="Toggle background video sound">
+    <span id="home-video-sound-icon">&#128263;</span>
+    <span id="home-video-sound-text">Video Sound</span>
+</button>
+{% endif %}
+
 <section class="hero-section" aria-label="Hero section">
 
     {% if memories %}
@@ -529,12 +779,8 @@
         <div class="hero-slide {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}"
             data-is-video="{% if memory.is_video %}true{% else %}false{% endif %}">
             {% if memory.is_video %}
-            {% if memory.video %}
-            <video src="{{ memory.video.url }}" autoplay muted loop playsinline
-                preload="{% if forloop.first %}auto{% else %}none{% endif %}"
-                aria-label="{{ memory.alt_text|default:memory.caption }}"></video>
+            <!-- Persistent ambient video is running in fixed background layer -->
             <span class="hero-slide-video-badge">&#9654; Video</span>
-            {% endif %}
             {% else %}
             {% if memory.photo %}
             <img src="{{ memory.photo.url }}" alt="{{ memory.alt_text|default:memory.caption }}"
@@ -576,6 +822,78 @@
 
     <div class="scroll-hint" aria-hidden="true"><span></span></div>
 
+</section>
+
+<!-- Live Memory Counter Section: Dual Milestones -->
+<section class="memory-counter-section py-5" aria-label="Anniversary counter">
+    <div class="container text-center">
+        <h2 class="section-title split-text mb-2">Every Second of Our Story</h2>
+        <p class="text-warm-muted italic-desc mb-5">Counting every precious heartbeat since the day we came together & started dating 💕</p>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Milestone 1: Together Since (22/02/2024) -->
+            <div class="col-md-6 col-lg-5 scroll-reveal scroll-reveal-fade-right">
+                <div class="milestone-card">
+                    <div class="milestone-header">
+                        <span class="milestone-icon">💖</span>
+                        <div>
+                            <h3 class="milestone-title">Together Since</h3>
+                            <span class="milestone-date">February 22, 2024</span>
+                        </div>
+                    </div>
+                    <div class="counter-grid">
+                        <div class="counter-box">
+                            <div class="counter-number" id="together-days">00</div>
+                            <div class="counter-label">Days</div>
+                        </div>
+                        <div class="counter-box">
+                            <div class="counter-number" id="together-hours">00</div>
+                            <div class="counter-label">Hours</div>
+                        </div>
+                        <div class="counter-box">
+                            <div class="counter-number" id="together-minutes">00</div>
+                            <div class="counter-label">Minutes</div>
+                        </div>
+                        <div class="counter-box">
+                            <div class="counter-number" id="together-seconds">00</div>
+                            <div class="counter-label">Seconds</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Milestone 2: Dating Since (23/05/2024) -->
+            <div class="col-md-6 col-lg-5 scroll-reveal scroll-reveal-fade-left">
+                <div class="milestone-card">
+                    <div class="milestone-header">
+                        <span class="milestone-icon">💑</span>
+                        <div>
+                            <h3 class="milestone-title">Dating Since</h3>
+                            <span class="milestone-date">May 23, 2024</span>
+                        </div>
+                    </div>
+                    <div class="counter-grid">
+                        <div class="counter-box">
+                            <div class="counter-number" id="dating-days">00</div>
+                            <div class="counter-label">Days</div>
+                        </div>
+                        <div class="counter-box">
+                            <div class="counter-number" id="dating-hours">00</div>
+                            <div class="counter-label">Hours</div>
+                        </div>
+                        <div class="counter-box">
+                            <div class="counter-number" id="dating-minutes">00</div>
+                            <div class="counter-label">Minutes</div>
+                        </div>
+                        <div class="counter-box">
+                            <div class="counter-number" id="dating-seconds">00</div>
+                            <div class="counter-label">Seconds</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <!-- Journey Section -->
@@ -649,12 +967,52 @@
     </div>
 </section>
 
-<!-- Love Quote Parallax Banner -->
-<section class="quote-parallax-section py-5" aria-label="A special note">
-    <div class="quote-parallax-bg" style="background-image: linear-gradient(rgba(253, 246, 240, 0.85), rgba(253, 246, 240, 0.85)), url('{% if memories %}{% with m=memories|first %}{{ m.media_url }}{% endwith %}{% endif %}');"></div>
-    <div class="container text-center py-5 position-relative z-index-2 scroll-reveal scroll-reveal-zoom-out">
-        <h2 class="parallax-quote split-text">"You are my today and all of my tomorrows."</h2>
-        <p class="quote-author mt-3 text-warm-muted">&mdash; Leo Christopher</p>
+<!-- Reasons I Love You Section -->
+<section class="card-deck-section py-5" aria-label="Compliments deck">
+    <div class="container py-4">
+        <div class="text-center mb-4 scroll-reveal scroll-reveal-fade-down">
+            <h2 class="section-title split-text">Reasons Why I Love You</h2>
+            <p class="text-warm-muted italic-desc">Click next to swipe through a few sweet reasons...</p>
+        </div>
+        
+        <div class="deck-container scroll-reveal scroll-reveal-zoom-in" id="deck-container">
+            <div class="swipe-card" data-index="0">
+                <span class="swipe-card-icon">💖</span>
+                <p class="swipe-card-text">Your smile that brightens up my darkest days.</p>
+            </div>
+            <div class="swipe-card" data-index="1">
+                <span class="swipe-card-icon">🌟</span>
+                <p class="swipe-card-text">The way you listen to all my silly stories with so much patience.</p>
+            </div>
+            <div class="swipe-card" data-index="2">
+                <span class="swipe-card-icon">🌸</span>
+                <p class="swipe-card-text">How you make me feel safe, loved, and completely myself.</p>
+            </div>
+            <div class="swipe-card" data-index="3">
+                <span class="swipe-card-icon">🎵</span>
+                <p class="swipe-card-text">The sound of your laughter, which is my absolute favorite song.</p>
+            </div>
+            <div class="swipe-card" data-index="4">
+                <span class="swipe-card-icon">✨</span>
+                <p class="swipe-card-text">Your kind heart and how you care so deeply for everyone around you.</p>
+            </div>
+        </div>
+
+        <div class="deck-controls scroll-reveal scroll-reveal-fade-up">
+            <button class="btn-deck" id="btn-prev-card" aria-label="Previous card">&#8592;</button>
+            <button class="btn-deck" id="btn-next-card" aria-label="Next card">&#8594;</button>
+        </div>
+    </div>
+</section>
+
+<!-- Love Quote Video & Parallax Banner -->
+<section class="quote-parallax-section" aria-label="A special note">
+    <div class="container text-center py-4 position-relative scroll-reveal scroll-reveal-zoom-out" style="z-index: 3;">
+        <div class="quote-glass-card">
+            <span class="quote-heart-icon" style="font-size: 2.2rem; color: var(--color-primary); display: block; margin-bottom: 1.2rem;">&#10084;</span>
+            <h2 class="parallax-quote split-text">{{ quote_text }}</h2>
+            <p class="quote-author mt-3">&mdash; {{ quote_author }}</p>
+        </div>
     </div>
 </section>
 
@@ -668,8 +1026,34 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/main.js' %}" defer></script>
+<script src="{% static 'js/main.js' %}?v=1.4" defer></script>
 <script src="{% static 'js/animations.js' %}" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var homeBgVid = document.getElementById('home-bg-video');
+        var homeSoundBtn = document.getElementById('home-video-sound-toggle');
+        var homeSoundIcon = document.getElementById('home-video-sound-icon');
+        var homeSoundText = document.getElementById('home-video-sound-text');
+
+        if (homeBgVid && homeSoundBtn) {
+            homeSoundBtn.addEventListener('click', function () {
+                homeBgVid.muted = !homeBgVid.muted;
+                if (homeBgVid.muted) {
+                    homeSoundBtn.classList.remove('unmuted');
+                    if (homeSoundIcon) homeSoundIcon.innerHTML = '&#128263;';
+                    if (homeSoundText) homeSoundText.textContent = 'Video Sound';
+                    homeSoundBtn.setAttribute('title', 'Unmute background video');
+                } else {
+                    homeSoundBtn.classList.add('unmuted');
+                    if (homeSoundIcon) homeSoundIcon.innerHTML = '&#128266;';
+                    if (homeSoundText) homeSoundText.textContent = 'Mute Video';
+                    homeSoundBtn.setAttribute('title', 'Mute background video');
+                    homeBgVid.play().catch(function () {});
+                }
+            });
+        }
+    });
+</script>
 {% if background_audio_url %}
 <script>
     (function () {

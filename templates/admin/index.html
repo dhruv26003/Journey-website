@@ -1,0 +1,195 @@
+{% extends "admin/base.html" %}
+{% load i18n static %}
+
+{% block title %}Dashboard | Memories Insight Center{% endblock %}
+
+{% block content %}
+<!-- ==================== HERO SECTION (Amboras Style) ==================== -->
+<section class="saas-hero">
+    <h1 class="saas-hero-title">Memories Insight Center</h1>
+    <p class="saas-hero-subtitle">Manage and curate your photos, videos, and special moments</p>
+
+    <!-- Action Buttons Row (Star, Filter, Coral Share Pill) -->
+    <div class="hero-action-row">
+        <button class="btn-circle-action" title="Favorite">
+            <i class="far fa-star"></i>
+        </button>
+        <button class="btn-circle-action" title="Filter">
+            <i class="fas fa-sliders-h"></i>
+        </button>
+
+        <!-- Coral Pill Button with 3 Overlapping Dots -->
+        <a href="{% url 'admin:memories_memory_add' %}" class="hero-share-pill">
+            <div class="pill-dots">
+                <span class="pill-dot pill-dot-1"></span>
+                <span class="pill-dot pill-dot-2"></span>
+                <span class="pill-dot pill-dot-3"></span>
+            </div>
+            <i class="fas fa-plus" style="font-size: 11px;"></i>
+            <span>Add Memory</span>
+        </a>
+    </div>
+</section>
+
+<!-- ==================== QUICK STATS ROW ==================== -->
+<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+    <div class="stat-box">
+        <div class="stat-header">
+            <span class="stat-name">Home Slides</span>
+            <div class="stat-icon icon-photo"><i class="fas fa-home"></i></div>
+        </div>
+        <div class="stat-value">Home Media</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-header">
+            <span class="stat-name">Gallery Items</span>
+            <div class="stat-icon icon-photo"><i class="far fa-images"></i></div>
+        </div>
+        <div class="stat-value">Gallery Media</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-header">
+            <span class="stat-name">Story Timeline</span>
+            <div class="stat-icon icon-video"><i class="fas fa-stream"></i></div>
+        </div>
+        <div class="stat-value">Timeline Memories</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-header">
+            <span class="stat-name">BV Album</span>
+            <div class="stat-icon icon-bv"><i class="fas fa-camera-retro"></i></div>
+        </div>
+        <div class="stat-value">BV Photos</div>
+    </div>
+</div>
+
+<!-- ==================== WORKSPACE MANAGEMENT MODULES ==================== -->
+<div class="table-card">
+    <div class="table-toolbar">
+        <div>
+            <h3 style="font-family:var(--font-heading);font-weight:700;font-size:1.2rem;color:var(--text-title);margin-bottom:0.25rem;">
+                Content & Media Vault
+            </h3>
+            <p style="font-size:0.88rem;color:var(--text-muted);">Manage separate media for Home, Gallery, and Timeline</p>
+        </div>
+        <div class="table-actions-group" style="display:flex; gap:8px; flex-wrap:wrap;">
+            <a href="{% url 'admin:memories_homemedia_add' %}" class="btn-saas-action" style="padding:0.45rem 0.9rem;font-size:0.82rem; background:#ef4444;">
+                <i class="fas fa-plus"></i>
+                <span>Add Home</span>
+            </a>
+            <a href="{% url 'admin:memories_gallerymedia_add' %}" class="btn-saas-action" style="padding:0.45rem 0.9rem;font-size:0.82rem;">
+                <i class="fas fa-plus"></i>
+                <span>Add Gallery</span>
+            </a>
+            <a href="{% url 'admin:memories_memory_add' %}" class="btn-saas-action" style="padding:0.45rem 0.9rem;font-size:0.82rem;">
+                <i class="fas fa-plus"></i>
+                <span>Add Timeline</span>
+            </a>
+        </div>
+    </div>
+
+    <table class="saas-table">
+        <thead>
+            <tr>
+                <th>Section</th>
+                <th>Description</th>
+                <th style="text-align:right;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <div class="stat-icon icon-photo" style="width:30px;height:30px;font-size:12px;background:#fef2f2;color:#ef4444;"><i class="fas fa-home"></i></div>
+                        <a href="{% url 'admin:memories_homemedia_changelist' %}" style="font-weight:700;color:var(--text-title);text-decoration:none;">
+                            Home Media
+                        </a>
+                    </div>
+                </td>
+                <td style="color:var(--text-muted);">Photos and videos displayed on the Home Page hero background slideshow</td>
+                <td style="text-align:right;">
+                    <a href="{% url 'admin:memories_homemedia_changelist' %}" style="margin-right:1rem;color:#475569;font-weight:600;text-decoration:none;">
+                        <i class="fas fa-list"></i> View All
+                    </a>
+                    <a href="{% url 'admin:memories_homemedia_add' %}" style="color:#ef4444;font-weight:600;text-decoration:none;">
+                        <i class="fas fa-plus-circle"></i> Add
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <div class="stat-icon icon-photo" style="width:30px;height:30px;font-size:12px;background:#ecfdf5;color:#059669;"><i class="far fa-images"></i></div>
+                        <a href="{% url 'admin:memories_gallerymedia_changelist' %}" style="font-weight:700;color:var(--text-title);text-decoration:none;">
+                            Gallery Media
+                        </a>
+                    </div>
+                </td>
+                <td style="color:var(--text-muted);">Photos and videos for the Gallery page (Book Flip, Carousel, Fade In)</td>
+                <td style="text-align:right;">
+                    <a href="{% url 'admin:memories_gallerymedia_changelist' %}" style="margin-right:1rem;color:#475569;font-weight:600;text-decoration:none;">
+                        <i class="fas fa-list"></i> View All
+                    </a>
+                    <a href="{% url 'admin:memories_gallerymedia_add' %}" style="color:#ef4444;font-weight:600;text-decoration:none;">
+                        <i class="fas fa-plus-circle"></i> Add
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <div class="stat-icon icon-video" style="width:30px;height:30px;font-size:12px;background:#eff6ff;color:#3b82f6;"><i class="fas fa-stream"></i></div>
+                        <a href="{% url 'admin:memories_memory_changelist' %}" style="font-weight:700;color:var(--text-title);text-decoration:none;">
+                            Timeline Memories
+                        </a>
+                    </div>
+                </td>
+                <td style="color:var(--text-muted);">Dated memories, captions, and media organized in the interactive Story Timeline</td>
+                <td style="text-align:right;">
+                    <a href="{% url 'admin:memories_memory_changelist' %}" style="margin-right:1rem;color:#475569;font-weight:600;text-decoration:none;">
+                        <i class="fas fa-list"></i> View All
+                    </a>
+                    <a href="{% url 'admin:memories_memory_add' %}" style="color:#ef4444;font-weight:600;text-decoration:none;">
+                        <i class="fas fa-plus-circle"></i> Add
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <div class="stat-icon icon-bv" style="width:30px;height:30px;font-size:12px;"><i class="fas fa-camera-retro"></i></div>
+                        <a href="{% url 'admin:memories_bvphoto_changelist' %}" style="font-weight:700;color:var(--text-title);text-decoration:none;">
+                            BV Photos
+                        </a>
+                    </div>
+                </td>
+                <td style="color:var(--text-muted);">Manage special BV album gallery photos and display sequence</td>
+                <td style="text-align:right;">
+                    <a href="{% url 'admin:memories_bvphoto_changelist' %}" style="margin-right:1rem;color:#475569;font-weight:600;text-decoration:none;">
+                        <i class="fas fa-list"></i> View All
+                    </a>
+                    <a href="{% url 'admin:memories_bvphoto_add' %}" style="color:#ef4444;font-weight:600;text-decoration:none;">
+                        <i class="fas fa-plus-circle"></i> Add
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                        <div class="stat-icon icon-audio" style="width:30px;height:30px;font-size:12px;"><i class="fas fa-sliders-h"></i></div>
+                        <a href="{% url 'admin:memories_sitesettings_changelist' %}" style="font-weight:700;color:var(--text-title);text-decoration:none;">
+                            Site Settings
+                        </a>
+                    </div>
+                </td>
+                <td style="color:var(--text-muted);">Configure background audio song, welcome note, and apology message</td>
+                <td style="text-align:right;">
+                    <a href="{% url 'admin:memories_sitesettings_changelist' %}" style="color:#ef4444;font-weight:600;text-decoration:none;">
+                        <i class="fas fa-cog"></i> Edit Settings
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

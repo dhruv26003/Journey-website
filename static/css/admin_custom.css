@@ -1,0 +1,565 @@
+/* =========================================================
+   admin_custom.css — Sleek Dark Mode Enhancement for Jazzmin
+   Complete Dark Theme: Dashboard, Tables, Forms, Changelist, Login
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --dark-bg-deep: #080c14;
+    --dark-bg-card: #111724;
+    --dark-bg-elevated: #1a2336;
+    --dark-bg-input: #0a0f1a;
+    --dark-border: rgba(255, 255, 255, 0.08);
+    --dark-border-hover: rgba(244, 63, 94, 0.45);
+    --accent-glow: rgba(244, 63, 94, 0.3);
+    --accent-gradient: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    --accent-gradient-hover: linear-gradient(135deg, #fb7185 0%, #f43f5e 100%);
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+}
+
+/* ---------------------------------------------------------
+   GLOBAL & BODY
+   --------------------------------------------------------- */
+body, html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    letter-spacing: -0.01em;
+    background-color: var(--dark-bg-deep) !important;
+    color: var(--text-primary) !important;
+}
+
+h1, h2, h3, h4, h5, h6, .brand-text, .login-logo, .login-logo a, .card-title {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600;
+}
+
+a {
+    color: #f43f5e;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #fb7185;
+}
+
+/* ---------------------------------------------------------
+   1. NAVBAR & HEADER
+   --------------------------------------------------------- */
+.main-header.navbar {
+    background: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--dark-border) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.main-header.navbar .nav-link {
+    color: var(--text-secondary) !important;
+    font-weight: 500;
+}
+
+.main-header.navbar .nav-link:hover {
+    color: #f43f5e !important;
+}
+
+.brand-link {
+    background: #0f172a !important;
+    border-bottom: 1px solid var(--dark-border) !important;
+    padding: 0.9rem 1.2rem !important;
+}
+
+.brand-text {
+    font-size: 1.25rem !important;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #ffffff 0%, #fda4af 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ---------------------------------------------------------
+   2. SIDEBAR STYLING
+   --------------------------------------------------------- */
+.main-sidebar {
+    background: #0c1220 !important;
+    border-right: 1px solid var(--dark-border) !important;
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar .nav-sidebar .nav-item > .nav-link {
+    border-radius: 10px;
+    margin: 4px 10px;
+    padding: 0.7rem 1.1rem;
+    color: var(--text-muted) !important;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.sidebar .nav-sidebar .nav-item > .nav-link:hover {
+    background: rgba(255, 255, 255, 0.07) !important;
+    color: #f8fafc !important;
+    transform: translateX(4px);
+}
+
+.sidebar .nav-sidebar .nav-item > .nav-link.active {
+    background: var(--accent-gradient) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(244, 63, 94, 0.45) !important;
+}
+
+.sidebar .nav-sidebar .nav-item > .nav-link.active .nav-icon {
+    color: #ffffff !important;
+}
+
+.sidebar .nav-header {
+    color: #64748b !important;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 1.2rem 1.2rem 0.5rem;
+}
+
+/* ---------------------------------------------------------
+   3. CONTENT WRAPPER & BREADCRUMBS
+   --------------------------------------------------------- */
+.content-wrapper, #content, #content-main, .content {
+    background: var(--dark-bg-deep) !important;
+    color: var(--text-primary) !important;
+}
+
+.content-header h1 {
+    color: #f8fafc !important;
+    font-weight: 700;
+    font-size: 1.7rem;
+}
+
+.breadcrumb {
+    background: transparent !important;
+    padding: 0.25rem 0 !important;
+}
+
+.breadcrumb-item, .breadcrumb-item a {
+    color: var(--text-muted) !important;
+    font-size: 0.9rem;
+}
+
+.breadcrumb-item.active {
+    color: #f43f5e !important;
+}
+
+/* ---------------------------------------------------------
+   4. CARDS & CONTAINERS (Sleek Dark Glow)
+   --------------------------------------------------------- */
+.card, .module, #changelist {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 12px 35px -8px rgba(0, 0, 0, 0.6) !important;
+    margin-bottom: 1.75rem;
+    color: var(--text-primary) !important;
+    overflow: hidden;
+}
+
+.card-header, .module h2, .module caption {
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-bottom: 1px solid var(--dark-border) !important;
+    padding: 1.1rem 1.4rem !important;
+    color: #f8fafc !important;
+}
+
+.card-body {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+/* ---------------------------------------------------------
+   5. CHANGELIST, TABLES & RESULTS LIST
+   --------------------------------------------------------- */
+#result_list, .table, table {
+    background: transparent !important;
+    color: var(--text-secondary) !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+    margin-bottom: 0 !important;
+}
+
+/* Table Header */
+#result_list thead th, .table thead th, table thead th {
+    background: #161e2e !important;
+    border-top: none !important;
+    border-bottom: 1px solid rgba(244, 63, 94, 0.3) !important;
+    color: #f8fafc !important;
+    font-size: 0.82rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+    font-weight: 600 !important;
+    padding: 1rem 1.1rem !important;
+}
+
+#result_list thead th a, .table thead th a {
+    color: #f8fafc !important;
+    text-decoration: none !important;
+}
+
+#result_list thead th a:hover, .table thead th a:hover {
+    color: #f43f5e !important;
+}
+
+/* Table Rows */
+#result_list tbody tr, .table tbody tr, table tbody tr {
+    background: var(--dark-bg-card) !important;
+    transition: background 0.15s ease !important;
+}
+
+#result_list tbody tr:nth-of-type(odd), .table tbody tr:nth-of-type(odd) {
+    background: #0d1320 !important;
+}
+
+#result_list tbody tr:hover, .table tbody tr:hover {
+    background: rgba(244, 63, 94, 0.08) !important;
+}
+
+#result_list tbody tr.selected, .table tbody tr.selected {
+    background: rgba(244, 63, 94, 0.15) !important;
+}
+
+/* Table Cells */
+#result_list td, .table td, table td {
+    border-top: 1px solid var(--dark-border) !important;
+    border-bottom: none !important;
+    padding: 0.95rem 1.1rem !important;
+    vertical-align: middle !important;
+    color: var(--text-secondary) !important;
+    font-size: 0.92rem !important;
+}
+
+#result_list td a, .table td a {
+    color: #f8fafc !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+}
+
+#result_list td a:hover, .table td a:hover {
+    color: #f43f5e !important;
+}
+
+/* Table Inputs (like Display Order) */
+#result_list input[type="text"],
+#result_list input[type="number"],
+#result_list select,
+.vIntegerField {
+    background: var(--dark-bg-input) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    padding: 0.4rem 0.75rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    max-width: 100px;
+    transition: all 0.2s ease;
+}
+
+#result_list input:focus, .vIntegerField:focus {
+    border-color: #f43f5e !important;
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25) !important;
+    outline: none !important;
+}
+
+/* ---------------------------------------------------------
+   6. ACTIONS BAR & SEARCH TOOLBAR
+   --------------------------------------------------------- */
+.actions {
+    background: #161e2e !important;
+    border: 1px solid var(--dark-border) !important;
+    border-radius: 12px !important;
+    padding: 0.8rem 1.2rem !important;
+    margin: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.8rem !important;
+    color: var(--text-secondary) !important;
+}
+
+.actions select {
+    background: var(--dark-bg-input) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    padding: 0.45rem 1rem !important;
+    font-size: 0.9rem !important;
+}
+
+.actions button, .actions .button, .actions .btn {
+    background: var(--accent-gradient) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    padding: 0.45rem 1.2rem !important;
+    box-shadow: 0 4px 12px rgba(244, 63, 94, 0.35) !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.actions button:hover, .actions .button:hover {
+    background: var(--accent-gradient-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(244, 63, 94, 0.5) !important;
+}
+
+.actions span.all, .actions span.action-counter, .actions span.clear {
+    color: var(--text-muted) !important;
+    font-size: 0.88rem !important;
+}
+
+#toolbar, #changelist-search {
+    background: transparent !important;
+    border: none !important;
+    padding: 0.8rem 1rem !important;
+}
+
+#changelist-search input[type="text"], #searchbar {
+    background: var(--dark-bg-input) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    padding: 0.5rem 1rem !important;
+}
+
+#changelist-search input[type="submit"] {
+    background: var(--accent-gradient) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 1.2rem !important;
+    margin-left: 0.5rem !important;
+}
+
+/* ---------------------------------------------------------
+   7. PAGINATION & FOOTER
+   --------------------------------------------------------- */
+.paginator {
+    background: transparent !important;
+    border-top: 1px solid var(--dark-border) !important;
+    color: var(--text-muted) !important;
+    padding: 1rem 1.25rem !important;
+    font-size: 0.88rem !important;
+}
+
+.paginator a {
+    color: #f43f5e !important;
+    padding: 0.3rem 0.7rem !important;
+    border-radius: 6px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    margin: 0 2px !important;
+}
+
+.paginator a:hover {
+    background: rgba(244, 63, 94, 0.15) !important;
+}
+
+.paginator .this-page {
+    background: var(--accent-gradient) !important;
+    color: #ffffff !important;
+    padding: 0.3rem 0.7rem !important;
+    border-radius: 6px !important;
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------------
+   8. BUTTONS & BADGES
+   --------------------------------------------------------- */
+.btn-primary, .btn-success, .btn-info, .btn-danger, .submit-row input[type="submit"], input[name="_save"] {
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    padding: 0.6rem 1.3rem !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+}
+
+.btn-primary, .submit-row input[type="submit"], input[name="_save"] {
+    background: var(--accent-gradient) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(244, 63, 94, 0.4) !important;
+}
+
+.btn-primary:hover, .submit-row input[type="submit"]:hover, input[name="_save"]:hover {
+    background: var(--accent-gradient-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(244, 63, 94, 0.6) !important;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35) !important;
+}
+
+.btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5) !important;
+}
+
+.badge {
+    border-radius: 6px;
+    padding: 0.4em 0.75em;
+    font-weight: 600;
+}
+
+/* ---------------------------------------------------------
+   9. FORM CONTROLS & CHANGE FORMS
+   --------------------------------------------------------- */
+.form-control,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="number"],
+select,
+.select2-container--default .select2-selection--single {
+    background: var(--dark-bg-input) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 10px !important;
+    color: #f8fafc !important;
+    padding: 0.6rem 0.9rem !important;
+}
+
+.form-control:focus, textarea:focus, select:focus, input:focus {
+    border-color: #f43f5e !important;
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.25) !important;
+    background: #0f1728 !important;
+    outline: none !important;
+}
+
+.help, .help-block, .form-text {
+    color: var(--text-muted) !important;
+    font-size: 0.85rem !important;
+}
+
+fieldset {
+    background: transparent !important;
+    border: 1px solid var(--dark-border) !important;
+    border-radius: 12px !important;
+    padding: 1.25rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+fieldset h2 {
+    background: transparent !important;
+    color: #f8fafc !important;
+    font-size: 1.15rem !important;
+    padding: 0 0 0.75rem 0 !important;
+    border-bottom: 1px solid var(--dark-border) !important;
+}
+
+.submit-row {
+    background: var(--dark-bg-card) !important;
+    border: 1px solid var(--dark-border) !important;
+    border-radius: 12px !important;
+    padding: 1rem 1.25rem !important;
+    display: flex !important;
+    gap: 0.75rem !important;
+    align-items: center !important;
+}
+
+/* ---------------------------------------------------------
+   10. LOGIN PAGE
+   --------------------------------------------------------- */
+body.jazzmin-login-page, body.login-page {
+    background: radial-gradient(circle at 50% 25%, #1e1b4b 0%, #0f172a 50%, #060911 100%) !important;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-box {
+    width: 440px;
+    max-width: 92%;
+    margin: 2rem auto;
+}
+
+.login-logo {
+    margin-bottom: 1.8rem;
+    text-align: center;
+}
+
+.login-logo a, .login-logo h1 {
+    color: #ffffff !important;
+    font-size: 2.2rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 25px rgba(244, 63, 94, 0.7);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    text-decoration: none !important;
+}
+
+.login-box .card {
+    background: rgba(18, 24, 38, 0.85) !important;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8),
+                0 0 35px rgba(244, 63, 94, 0.18) !important;
+}
+
+.login-card-body, .login-box .card-body {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+    padding: 2.5rem !important;
+}
+
+.login-box-msg {
+    color: var(--text-muted) !important;
+    font-size: 0.95rem;
+    margin-bottom: 1.75rem;
+    text-align: center;
+}
+
+.login-box .form-control {
+    background: rgba(8, 12, 20, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-right: none !important;
+    border-radius: 12px 0 0 12px !important;
+    color: #f8fafc !important;
+    padding: 0.8rem 1.1rem !important;
+}
+
+.login-box .input-group-text {
+    background: rgba(8, 12, 20, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-left: none !important;
+    color: #f43f5e !important;
+    border-radius: 0 12px 12px 0 !important;
+    padding: 0.8rem 1.1rem !important;
+}
+
+/* ---------------------------------------------------------
+   11. CUSTOM SCROLLBARS
+   --------------------------------------------------------- */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}

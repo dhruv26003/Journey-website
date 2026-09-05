@@ -1,0 +1,67 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block content_title %}{% endblock %}
+
+{% block bodyclass %}login{% endblock %}
+
+{% block content %}
+<div style="text-align:center; margin-bottom: 1.5rem;">
+    <div style="font-size:3rem; margin-bottom:0.5rem;">&#9829;</div>
+    <h1 style="font-family:'Playfair Display',Georgia,serif; color:#c0605a; font-size:1.75rem; margin:0;">
+        Memories Admin
+    </h1>
+    <p style="color:#8c6a64; font-size:0.9rem; margin-top:0.35rem;">
+        Sign in to manage your memories
+    </p>
+</div>
+
+{% if form.errors %}
+<div class="messagelist">
+    <li class="error"
+        style="list-style:none; padding:0.7rem 1.1rem; border-radius:8px; background:rgba(192,96,90,0.12); border:1px solid #c0605a; color:#a04e49; font-size:0.875rem; margin-bottom:1rem;">
+        {% if form.errors.items|length == 1 %}
+        {% trans "Please enter the correct username and password." %}
+        {% else %}
+        {% trans "Please correct the error below." %}
+        {% endif %}
+    </li>
+</div>
+{% endif %}
+
+<form action="{{ app_path }}" method="post" id="login-form">
+    {% csrf_token %}
+
+    <div style="margin-bottom:1rem;">
+        <label for="id_username"
+            style="display:block; font-weight:600; font-size:0.85rem; color:#3d2b27; margin-bottom:0.35rem;">
+            {% trans "Username" %}
+        </label>
+        <input type="text" name="username" id="id_username" autofocus autocapitalize="none" autocomplete="username"
+            maxlength="254" required
+            style="width:100%; border:1.5px solid #e8c8bf; border-radius:8px; padding:0.55rem 0.85rem; font-size:0.9rem; background:#fdf6f0; color:#3d2b27; box-sizing:border-box; transition:border-color 0.2s;"
+            onfocus="this.style.borderColor='#c0605a'; this.style.boxShadow='0 0 0 3px rgba(192,96,90,0.18)'"
+            onblur="this.style.borderColor='#e8c8bf'; this.style.boxShadow='none'">
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+        <label for="id_password"
+            style="display:block; font-weight:600; font-size:0.85rem; color:#3d2b27; margin-bottom:0.35rem;">
+            {% trans "Password" %}
+        </label>
+        <input type="password" name="password" id="id_password" autocomplete="current-password" required
+            style="width:100%; border:1.5px solid #e8c8bf; border-radius:8px; padding:0.55rem 0.85rem; font-size:0.9rem; background:#fdf6f0; color:#3d2b27; box-sizing:border-box; transition:border-color 0.2s;"
+            onfocus="this.style.borderColor='#c0605a'; this.style.boxShadow='0 0 0 3px rgba(192,96,90,0.18)'"
+            onblur="this.style.borderColor='#e8c8bf'; this.style.boxShadow='none'">
+    </div>
+
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <button type="submit"
+        style="width:100%; background:#c0605a; color:#fff; border:none; border-radius:8px; padding:0.65rem; font-size:1rem; font-weight:600; cursor:pointer; transition:background 0.2s, transform 0.1s; font-family:inherit;"
+        onmouseover="this.style.background='#a04e49'; this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.background='#c0605a'; this.style.transform='translateY(0)'">
+        &#9829; {% trans "Sign In" %}
+    </button>
+</form>
+{% endblock %}

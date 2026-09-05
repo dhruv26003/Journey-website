@@ -4,27 +4,43 @@
 {% block title %}Apology — Our Memories{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/apology.css' %}">
+<link rel="stylesheet" href="{% static 'css/apology.css' %}?v=1.1">
 {% endblock %}
 
 {% block content %}
 <section class="apology-section" aria-label="Apology page">
 
-    <div class="apology-card">
-        <h1>A Letter for You &#9825;</h1>
-
-        <div class="apology-body">
-            {% if apology_message %}
-            {{ apology_message|safe }}
-            {% else %}
-            <p><em>No message yet — check back soon.</em></p>
-            {% endif %}
+    <div class="envelope-wrapper">
+        <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Click to open the letter">
+            <!-- Back flap -->
+            <div class="envelope-flap"></div>
+            <!-- Pocket front -->
+            <div class="envelope-front"></div>
+            <!-- Wax seal -->
+            <div class="envelope-seal">&#128147;</div>
+            
+            <!-- Letter sheets -->
+            <div class="envelope-letter" id="envelope-letter">
+                <div class="letter-sheet">
+                    <h1 class="letter-title">A Letter for You &#9825;</h1>
+                    <div class="apology-body">
+                        {% if apology_message %}
+                        {{ apology_message|safe }}
+                        {% else %}
+                        <p><em>No message yet — check back soon.</em></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
+        
+        <!-- Opening Hint -->
+        <div class="envelope-tip" id="envelope-tip">Click the seal to open your letter &#9993;</div>
     </div>
 
 </section>
 {% endblock %}
 
 {% block extra_js %}
-<script src="{% static 'js/apology.js' %}" defer></script>
+<script src="{% static 'js/apology.js' %}?v=1.1" defer></script>
 {% endblock %}

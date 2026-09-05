@@ -156,17 +156,21 @@
             });
         });
 
-        /* ---- pause on hover / focus ---- */
+        /* ---- hover / focus interactions ---- */
         var section = document.querySelector('.hero-section');
         if (section) {
             section.addEventListener('mouseenter', function () {
-                clearTimer();
+                // Keep video playing continuously when cursor hovers over it
                 var v = getVideo(slides[current]);
-                if (v) v.pause();
+                if (v && v.paused) {
+                    v.play().catch(function () { });
+                }
             });
             section.addEventListener('mouseleave', function () {
                 var v = getVideo(slides[current]);
-                if (v) v.play().catch(function () { });
+                if (v && v.paused) {
+                    v.play().catch(function () { });
+                }
                 scheduleNext();
             });
             section.addEventListener('focusin', function () {
@@ -184,16 +188,190 @@
     }
 
     /* -------------------------------------------------------
+       3. Anniversary Memory Counter (Dual Milestones)
+       ------------------------------------------------------- */
+    function initMemoryCounter() {
+        // Milestone 1: Together Since February 22, 2024 (22/02/2024)
+        var togetherTimestamp = new Date(2024, 1, 22, 0, 0, 0).getTime();
+        
+        // Milestone 2: Dating Since May 23, 2024 (23/05/2024)
+        var datingTimestamp = new Date(2024, 4, 23, 0, 0, 0).getTime();
+
+        function updateMilestone(startTime, prefix) {
+            var daysEl = document.getElementById(prefix + '-days');
+            var hoursEl = document.getElementById(prefix + '-hours');
+            var minsEl = document.getElementById(prefix + '-minutes');
+            var secsEl = document.getElementById(prefix + '-seconds');
+
+            if (!daysEl || !hoursEl || !minsEl || !secsEl) return;
+
+            var now = new Date().getTime();
+            var difference = now - startTime;
+            if (difference < 0) return;
+
+            var days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            daysEl.textContent = days < 10 ? '0' + days : days;
+            hoursEl.textContent = hours < 10 ? '0' + hours : hours;
+            minsEl.textContent = minutes < 10 ? '0' + minutes : minutes;
+            secsEl.textContent = seconds < 10 ? '0' + seconds : seconds;
+        }
+
+        function updateAllMilestones() {
+            updateMilestone(togetherTimestamp, 'together');
+            updateMilestone(datingTimestamp, 'dating');
+        }
+
+        // Initialize and update every second
+        updateAllMilestones();
+        setInterval(updateAllMilestones, 1000);
+    }
+
+    /* -------------------------------------------------------
+       4. Swipeable Compliments Card Deck
+       ------------------------------------------------------- */
+    function initSwipeableDeck() {
+        var container = document.getElementById('deck-container');
+        var btnNext = document.getElementById('btn-next-card');
+        var btnPrev = document.getElementById('btn-prev-card');
+        if (!container || !btnNext || !btnPrev || !window.gsap) return;
+
+        var isAnimating = false;
+
+        function getCards() {
+            return Array.from(container.querySelectorAll('.swipe-card'));
+        }
+
+        function swipeNext() {
+            if (isAnimating) return;
+            var cards = getCards();
+            if (cards.length <= 1) return;
+
+            isAnimating = true;
+            // The top card is the last child of the container in the HTML
+            var topCard = cards[cards.length - 1];
+
+            // Slide out to the right, rotate, and fade out
+            gsap.to(topCard, {
+                x: 350,
+                y: -30,
+                rotation: 25,
+                opacity: 0,
+                duration: 0.5,
+                ease: 'power2.inOut',
+                onComplete: function () {
+                    // Prepend the top card to make it the bottom card of the stack
+                    container.prepend(topCard);
+                    
+                    // Reset card layout parameters silently in background
+                    gsap.set(topCard, { x: 0, y: 24, rotation: 0, opacity: 0 });
+
+                    // Re-align depth of the card stack
+                    var newCards = getCards();
+                    newCards.forEach(function (card, index) {
+                        var depth = newCards.length - 1 - index;
+                        if (depth === 0) {
+                            gsap.to(card, {
+                                x: 0, y: 0, rotation: 0, opacity: 1,
+                                duration: 0.4, ease: 'back.out(1.2)'
+                            });
+                        } else if (depth === 1) {
+                            gsap.to(card, {
+                                x: 0, y: 8, rotation: -1.5, opacity: 0.95,
+                                duration: 0.4, ease: 'power2.out'
+                            });
+                        } else if (depth === 2) {
+                            gsap.to(card, {
+                                x: 0, y: 16, rotation: 1.5, opacity: 0.9,
+                                duration: 0.4, ease: 'power2.out'
+                            });
+                        } else {
+                            gsap.set(card, { x: 0, y: 24, rotation: 0, opacity: 0 });
+                        }
+                    });
+
+                    isAnimating = false;
+                }
+            });
+        }
+
+        function swipePrev() {
+            if (isAnimating) return;
+            var cards = getCards();
+            if (cards.length <= 1) return;
+
+            isAnimating = true;
+            // The bottom card is the first child in HTML
+            var bottomCard = cards[0];
+
+            // Set up its entering properties on the far left
+            gsap.set(bottomCard, { x: -350, y: -30, rotation: -25, opacity: 0 });
+            
+            // Move it to the end of container to make it the top card
+            container.appendChild(bottomCard);
+
+            // Animate it sliding in onto the stack
+            gsap.to(bottomCard, {
+                x: 0, y: 0, rotation: 0, opacity: 1,
+                duration: 0.5, ease: 'back.out(1.2)',
+                onComplete: function () {
+                    // Align remaining items
+                    var newCards = getCards();
+                    newCards.forEach(function (card, index) {
+                        var depth = newCards.length - 1 - index;
+                        if (depth === 1) {
+                            gsap.to(card, { x: 0, y: 8, rotation: -1.5, opacity: 0.95, duration: 0.3 });
+                        } else if (depth === 2) {
+                            gsap.to(card, { x: 0, y: 16, rotation: 1.5, opacity: 0.9, duration: 0.3 });
+                        } else if (depth >= 3) {
+                            gsap.set(card, { x: 0, y: 24, rotation: 0, opacity: 0 });
+                        }
+                    });
+                    isAnimating = false;
+                }
+            });
+        }
+
+        // Click Event Bindings
+        btnNext.addEventListener('click', swipeNext);
+        btnPrev.addEventListener('click', swipePrev);
+
+        // Touch Swipe Event Bindings
+        var startX = 0;
+        container.addEventListener('touchstart', function (e) {
+            startX = e.touches[0].clientX;
+        }, { passive: true });
+
+        container.addEventListener('touchend', function (e) {
+            var diffX = e.changedTouches[0].clientX - startX;
+            if (Math.abs(diffX) > 60) {
+                if (diffX > 0) {
+                    swipePrev();
+                } else {
+                    swipeNext();
+                }
+            }
+        }, { passive: true });
+    }
+
+    /* -------------------------------------------------------
        Bootstrap
        ------------------------------------------------------- */
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {
             initTypewriter();
             initSlideshow();
+            initMemoryCounter();
+            initSwipeableDeck();
         });
     } else {
         initTypewriter();
         initSlideshow();
+        initMemoryCounter();
+        initSwipeableDeck();
     }
 
 })();
